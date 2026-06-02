@@ -1,0 +1,46 @@
+{
+  "name": "iching-pro",
+  "version": "1.0.0",
+  "description": "Complete I Ching divination engine — zero dependency, fully typed",
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/esm/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "npm run build:esm && npm run build:cjs && npm run build:bundle",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
+    "build:bundle": "esbuild src/global.ts --bundle --format=iife --outfile=iChing.js --minify-whitespace",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --config jest.config.js",
+    "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "iching",
+    "i-ching",
+    "yi-jing",
+    "divination",
+    "hexagram",
+    "trigram",
+    "wuxing",
+    "five-elements"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.28.0",
+    "typescript": "^6.0.3"
+  }
+}

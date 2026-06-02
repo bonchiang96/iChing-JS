@@ -1,0 +1,5 @@
+*.bak
+*.bak2
+*.backup.*
+.DS_Store
+node_modules/

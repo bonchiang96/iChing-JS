@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>易经占卜 — I Ching Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#F2F0EB;color:#121212;font-family:"Noto Serif SC","Source Han Serif",Georgia,serif;-webkit-font-smoothing:antialiased;line-height:1.8}
+.container{max-width:720px;margin:0 auto;padding:0 24px}
+a{color:#C29F5D;text-decoration:underline;text-underline-offset:4px;transition:color 0.2s}
+a:hover{color:#A8863A}
+
+.hero{text-align:center;padding:80px 0 56px}
+.hero-icon{display:block;margin:0 auto 24px}
+.hero h1{font-size:2.6em;font-weight:700;letter-spacing:0.25em;color:#121212;margin-bottom:12px}
+.hero .tagline{font-family:"Inter","Noto Sans SC",sans-serif;color:#8A8A8A;font-size:14px;letter-spacing:0.06em;margin-bottom:40px}
+.cta{display:inline-block;background:#C29F5D;color:#FFFFFF;padding:16px 48px;border-radius:14px;font-size:16px;font-weight:600;text-decoration:none;letter-spacing:0.08em;font-family:inherit;transition:all 0.2s}
+.cta:hover{background:#B8923F;box-shadow:0 4px 20px rgba(194,159,93,0.30);transform:translateY(-1px)}
+.cta-sub{display:block;margin-top:12px;color:#ADB5BD;font-size:12px;font-family:"Inter",sans-serif}
+
+.card{background:#FFFFFF;border:1px solid #F1F3F5;border-radius:20px;padding:32px 40px;margin-bottom:20px}
+.card-header{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.card-header svg{flex-shrink:0}
+.card-header h2{font-size:20px;font-weight:700;color:#121212;letter-spacing:0.04em}
+.card p{color:#495057;font-size:15px;margin-bottom:12px;max-width:620px}
+.card p.lead{font-size:17px;color:#121212}
+.card p:last-child{margin-bottom:0}
+
+.badge-rec{display:inline-block;font-size:12px;font-weight:600;color:#C29F5D;background:#FDFBF7;border:1px solid #EAE2D1;border-radius:10px;padding:3px 12px;margin-left:8px;font-family:"Inter",sans-serif;letter-spacing:0.02em}
+
+.privacy-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:8px}
+.pcell{background:#F8F9FA;border-radius:14px;padding:20px;text-align:center}
+.pcell .pi{font-size:26px;margin-bottom:8px;display:block}
+.pcell .pt{font-size:15px;font-weight:600;color:#121212;margin-bottom:4px}
+.pcell .pd{font-size:13px;color:#8A8A8A;font-family:"Inter",sans-serif}
+
+.timeline{position:relative;padding-left:48px;margin-top:8px}
+.timeline::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:0;border-left:1px dashed #E9ECEF}
+.tl-step{display:flex;align-items:flex-start;gap:0;padding:16px 0;position:relative}
+.tl-step:first-child{padding-top:0}
+.tl-step:last-child{padding-bottom:0}
+.tl-num{position:absolute;left:-48px;width:38px;height:38px;background:#FFFFFF;border:2px solid #C29F5D;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#C29F5D;flex-shrink:0;font-family:"Inter",sans-serif;z-index:1}
+.tl-body .tlb{font-size:15px;font-weight:700;color:#121212;margin-bottom:4px}
+.tl-body .tld{font-size:13px;color:#6C757D;font-family:"Inter",sans-serif}
+
+.tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.tag{background:#F1F3F5;border:none;border-radius:20px;padding:8px 18px;font-size:13px;color:#495057;font-weight:600}
+
+.disclaimer-box{display:flex;border-radius:16px;background:#FFFFFF;border:1px solid #F1F3F5;padding:24px}
+.disclaimer-bar{width:4px;background:#C29F5D;border-radius:4px;margin-right:20px;flex-shrink:0}
+.disclaimer-body h3{font-size:15px;font-weight:700;color:#121212;margin-bottom:8px}
+.disclaimer-body p{color:#6C757D;font-size:13px;line-height:1.7;margin-bottom:8px}
+.disclaimer-body p:last-child{margin-bottom:0}
+
+.footer{text-align:center;padding:40px 0 32px;color:#CED4DA;font-size:12px;letter-spacing:0.05em}
+
+@media(max-width:640px){
+  .hero{padding:48px 0 36px}
+  .hero h1{font-size:1.8em}
+  .card{padding:24px 20px}
+  .privacy-grid{grid-template-columns:1fr}
+  .disclaimer-box{flex-direction:column}
+  .disclaimer-bar{width:100%;height:4px;margin-right:0;margin-bottom:16px}
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="container">
+    <svg class="hero-icon" width="56" height="56" viewBox="0 0 56 56" fill="none">
+      <circle cx="28" cy="28" r="26" stroke="#C29F5D" stroke-width="2"/>
+      <path d="M28 8C28 8 14 28 28 48C42 28 28 8 28 8Z" stroke="#C29F5D" stroke-width="1.5" fill="none"/>
+      <circle cx="28" cy="16" r="3" fill="#C29F5D"/>
+      <circle cx="28" cy="40" r="3" fill="#C29F5D"/>
+    </svg>
+    <h1>易 经 占 卜</h1>
+    <p class="tagline">数字起卦 · 以心问天</p>
+    <a href="app.html" class="cta">开 始 占 卜</a>
+    <span class="cta-sub">无需注册 · 无需下载 · 打开即用</span>
+  </div>
+</section>
+
+<section class="container">
+  <div class="card">
+    <div class="card-header">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#C29F5D" stroke-width="1.5"/><circle cx="11" cy="7" r="1.5" fill="#C29F5D"/><circle cx="8" cy="14" r="1.5" fill="#C29F5D"/><circle cx="14" cy="14" r="1.5" fill="#C29F5D"/></svg>
+      <h2>这个网站做什么</h2>
+    </div>
+    <p class="lead">一个简单纯粹的易经占卜工具。</p>
+    <p>摇出一卦，得到本卦、变卦、互卦、错卦、综卦，以及体用五行分析，全面解读你所问之事。</p>
+  </div>
+</section>
+
+<section class="container">
+  <div class="card">
+    <div class="card-header">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="2" width="18" height="18" rx="5" stroke="#C29F5D" stroke-width="1.5"/><rect x="4.5" y="4.5" width="5.5" height="5.5" rx="2" fill="#FDFBF7" stroke="#C29F5D" stroke-width="1"/><rect x="12" y="4.5" width="5.5" height="5.5" rx="2" fill="#FDFBF7" stroke="#C29F5D" stroke-width="1"/><rect x="4.5" y="12" width="5.5" height="5.5" rx="2" fill="#FDFBF7" stroke="#C29F5D" stroke-width="1"/><rect x="12" y="12" width="5.5" height="5.5" rx="2" fill="#FDFBF7" stroke="#C29F5D" stroke-width="1"/></svg>
+      <h2>随机摇卦</h2>
+      <span class="badge-rec">推荐</span>
+    </div>
+    <p class="lead">不需要自己选数字。让天来决定。</p>
+    <p>点击「开始摇卦」，数字快速滚动。心念所问之事，在恰当的瞬间按下空格键停住。六爻依次落定，自然而成。</p>
+    <p>也可以手动输入数字——无论哪种方式，心诚则灵。</p>
+  </div>
+</section>
+
+<section class="container">
+  <div class="card">
+    <div class="card-header">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="8" width="16" height="12" rx="2" stroke="#C29F5D" stroke-width="1.5"/><path d="M7 8V5.5C7 3.567 8.79 2 11 2C13.21 2 15 3.567 15 5.5V8" stroke="#C29F5D" stroke-width="1.5" stroke-linecap="round"/><circle cx="11" cy="14" r="1.5" fill="#C29F5D"/></svg>
+      <h2>你的数据，都在你手上</h2>
+    </div>
+    <div class="privacy-grid">
+      <div class="pcell"><span class="pi">🚫</span><div class="pt">无服务器</div><div class="pd">没有后端，没有数据库</div></div>
+      <div class="pcell"><span class="pi">💻</span><div class="pt">仅本地储存</div><div class="pd">全部留在你的设备上</div></div>
+      <div class="pcell"><span class="pi">🧹</span><div class="pt">关掉即消失</div><div class="pd">关闭页面，一切清空</div></div>
+      <div class="pcell"><span class="pi">👁️</span><div class="pt">无追踪</div><div class="pd">我们看不到你的任何数据</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="container">
+  <div class="card">
+    <div class="card-header">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="7" r="3" stroke="#C29F5D" stroke-width="1.5"/><path d="M5 18C5 15.2386 7.68629 13 11 13C14.3137 13 17 15.2386 17 18" stroke="#C29F5D" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="7" r="1" fill="#C29F5D"/><circle cx="14" cy="7" r="1" fill="#C29F5D"/></svg>
+      <h2>配合 AI 使用</h2>
+    </div>
+    <p>告诉 AI 你的情况和想了解的事，让 AI 帮你提炼成精准的提问，然后来这里摇卦，把结果发回给 AI 解卦。</p>
+    <div class="timeline">
+      <div class="tl-step">
+        <div class="tl-num">1</div>
+        <div class="tl-body"><div class="tlb">告诉 AI 你的情况</div><div class="tld">描述你当下的处境、困惑、或想问的事</div></div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-num">2</div>
+        <div class="tl-body"><div class="tlb">让 AI 帮你设定提问</div><div class="tld">AI 帮你把模糊的想法，提炼成精准的问题</div></div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-num">3</div>
+        <div class="tl-body"><div class="tlb">复制提问到本网站摇卦</div><div class="tld">粘贴问题，想清楚心中所问，开始摇卦</div></div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-num">4</div>
+        <div class="tl-body"><div class="tlb">把卦象结果发给 AI</div><div class="tld">一键复制全部卦象，发给 AI 进行分析</div></div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-num">5</div>
+        <div class="tl-body"><div class="tlb">AI 为你深度解卦</div><div class="tld">AI 根据卦象、体用、五行，为你全面解读</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container">
+  <div class="card">
+    <div class="card-header">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="2" y="4" width="8" height="6" rx="1.5" stroke="#C29F5D" stroke-width="1.5"/><rect x="12" y="4" width="8" height="6" rx="1.5" stroke="#C29F5D" stroke-width="1.5"/><rect x="2" y="12" width="8" height="6" rx="1.5" stroke="#C29F5D" stroke-width="1.5"/><rect x="12" y="12" width="8" height="6" rx="1.5" stroke="#C29F5D" stroke-width="1.5"/></svg>
+      <h2>支持多题连占</h2>
+    </div>
+    <p>有些事，一卦看不全。你可以连续摇多卦，全部记录下来，一并发给 AI 做综合分析。</p>
+    <div class="tags">
+      <span class="tag">🔁 连续占卜不丢失</span>
+      <span class="tag">📝 连占记录自动保存</span>
+      <span class="tag">📤 一键复制所有记录</span>
+      <span class="tag">🧩 作为一组发给 AI 解读</span>
+    </div>
+  </div>
+</section>
+
+<section class="container">
+  <div class="disclaimer-box">
+    <div class="disclaimer-bar"></div>
+    <div class="disclaimer-body">
+      <h3>⚠️ 免责声明</h3>
+      <p>本工具基于随机数生成卦象，其底层逻辑为数学随机，不涉及任何超自然力量。</p>
+      <p>我们不为占卜结果承担任何责任。所有卦象解读仅供参考，不构成任何形式的决策建议、医疗建议、法律建议或投资建议。</p>
+      <p>人生大事，请理性判断，必要时咨询专业人士。</p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <span>易经占卜 · 数字起卦法</span><br>
+    <span style="font-size:11px">MIT License</span>
+  </div>
+</footer>
+
+</body>
+</html>

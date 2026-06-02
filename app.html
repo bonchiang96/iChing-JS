@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>易经占卜 — I Ching Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#F8F9FA;color:#121212;font-family:"Noto Serif SC","Source Han Serif",Georgia,serif;-webkit-font-smoothing:antialiased}
+.app-shell{max-width:1440px;margin:0 auto;padding:40px 24px 80px}
+a{color:#C29F5D}
+.back-home{display:inline-block;color:#ADB5BD;font-size:13px;text-decoration:none;margin-bottom:20px;transition:color 0.2s;font-family:"Inter","Noto Sans SC",sans-serif}.back-home:hover{color:#C29F5D}
+.app-header{text-align:center;margin-bottom:40px}
+.app-header h1{font-size:2em;font-weight:700;letter-spacing:0.25em;color:#121212;margin-bottom:8px}
+.app-header .subtitle{font-family:"Inter","Noto Sans SC",sans-serif;color:#8A8A8A;font-size:13px;letter-spacing:0.06em}
+.main-layout{display:flex;gap:24px;align-items:flex-start;min-height:100vh}
+.left-panel{width:420px;flex-shrink:0}
+.right-panel{flex:1;min-width:0}
+.card{background:#FFFFFF;border:none;border-radius:24px;padding:24px;margin-bottom:24px;box-shadow:0px 10px 30px rgba(0,0,0,0.03)}
+.card-title{color:#121212;font-size:16px;font-weight:600;letter-spacing:0.05em;margin-bottom:16px}
+.question-area{width:100%;height:140px;background:#FFFFFF;border:1px solid #E9ECEF;border-radius:16px;padding:12px 16px;color:#121212;font-size:14px;font-family:inherit;line-height:1.6;resize:vertical;outline:none;transition:border-color 0.2s}
+.question-area::placeholder{color:#ADB5BD}
+.question-area:focus{border-color:#C29F5D;box-shadow:0 0 0 3px rgba(194,159,93,0.1)}
+.link-btn{background:#F1F3F5;border:none;color:#495057;font-size:12px;font-family:inherit;cursor:pointer;padding:6px 16px;border-radius:20px;transition:all 0.2s}
+.link-btn:hover{background:#E9ECEF;color:#121212}
+.tabs{display:inline-flex;gap:0;margin-bottom:20px;background:#F1F3F5;border-radius:12px;padding:4px}
+.tab-btn{background:transparent;border:none;color:#8A8A8A;padding:8px 20px;border-radius:10px;font-size:13px;font-family:"Inter",sans-serif;cursor:pointer;transition:all 0.2s;font-weight:500}
+.tab-btn.active{background:#FFFFFF;color:#121212;font-weight:600;box-shadow:0px 2px 6px rgba(0,0,0,0.05)}
+.slot-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.slot-cell{display:flex;flex-direction:column;align-items:center}
+.slot-label{color:#8A8A8A;font-size:11px;margin-bottom:6px;text-align:center}
+.slot-box{position:relative;background:#FFFFFF;border:1px solid #E9ECEF;border-radius:12px;height:64px;width:100%;display:flex;align-items:center;justify-content:center;color:#ADB5BD;font-size:14px;font-family:"Inter",monospace,sans-serif;cursor:pointer;transition:all 0.15s;user-select:none}
+.slot-box.active{border:2px solid #C29F5D;box-shadow:0 0 0 3px rgba(194,159,93,0.1);color:#C29F5D;font-size:18px;font-weight:bold}
+.slot-box.locked{color:#121212;font-size:16px;font-weight:600}
+.cast-hint{background:#F1F3F5;border:1px solid #E9ECEF;border-radius:14px;padding:14px;color:#495057;font-size:13px;font-family:"Inter",sans-serif;text-align:center;cursor:pointer;transition:all 0.2s;width:100%;display:block}
+.cast-hint:hover{border-color:#C29F5D;color:#C29F5D;background:#FDFBF7}
+.cast-hint kbd{background:#E9ECEF;padding:2px 6px;border-radius:3px;font-size:12px;color:#C29F5D}
+.status-bar{color:#AF8FE3;font-size:13px;font-weight:500;letter-spacing:0.05em;text-align:center;padding:14px;animation:breathe 1.5s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:0.6}50%{opacity:1}}
+.manual-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.manual-cell{display:flex;flex-direction:column;align-items:center}
+.manual-cell label{color:#8A8A8A;font-size:11px;margin-bottom:6px}
+.manual-cell input{width:100%;height:64px;background:#FFFFFF;border:1px solid #E9ECEF;border-radius:12px;text-align:center;color:#121212;font-size:14px;font-family:"Inter",monospace;outline:none;transition:border-color 0.2s}
+.manual-cell input::placeholder{color:#ADB5BD}
+.manual-cell input:focus{border-color:#C29F5D;box-shadow:0 0 0 3px rgba(194,159,93,0.1)}
+.btn-stack{display:flex;flex-direction:column;gap:10px}
+.btn-primary{width:100%;padding:14px;font-family:inherit;background:#C29F5D;border:none;border-radius:14px;color:#FFFFFF;font-size:15px;font-weight:600;cursor:pointer;text-align:center;transition:all 0.2s;letter-spacing:0.08em}
+.btn-primary:hover{background:#B8923F;box-shadow:0 4px 12px rgba(194,159,93,0.25)}
+.btn-exec{width:100%;padding:14px;font-family:inherit;background:#121212;border:none;border-radius:14px;color:#FFFFFF;font-size:15px;font-weight:500;cursor:pointer;text-align:center;transition:all 0.2s;letter-spacing:0.08em}
+.btn-exec:hover{background:#2A2A2A;box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+.btn-reset{width:100%;padding:12px;font-family:inherit;background:#FFFFFF;border:1px solid #E9ECEF;border-radius:14px;color:#8A8A8A;font-size:13px;font-weight:500;cursor:pointer;text-align:center;transition:all 0.2s}
+.btn-reset:hover{border-color:#CED4DA;color:#495057;background:#F8F9FA}
+.history-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.history-title{display:flex;align-items:center;gap:10px;color:#121212;font-size:20px;font-weight:700}
+.history-badge{background:#EAE2D1;color:#C29F5D;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;font-family:"Inter",sans-serif}
+.history-actions{display:flex;gap:12px}
+.ha-btn{background:#000000;border:none;padding:6px 14px;border-radius:20px;color:#FFFFFF;font-size:12px;font-family:inherit;cursor:pointer;transition:all 0.2s}
+.ha-btn:hover{background:#2A2A2A}
+.ha-btn.danger{background:#FFF5F5;color:#E05252;border:none}
+.ha-btn.danger:hover{background:#FFE8E8;color:#D03030}
+.hi-card{background:#FAFAFA;border:1px solid #F0F0F0;border-radius:14px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:border-color 0.2s}
+.hi-card:hover{border-color:#E0E0E0}
+.hi-card.active{border-color:#C29F5D;background:#FDFBF7}
+.hi-time{color:#ADB5BD;font-family:"Inter",monospace;font-size:11px;margin-bottom:6px}
+.hi-question{color:#121212;font-size:13px;margin-bottom:8px;font-weight:500}
+.hi-summary{color:#8A8A8A;font-size:12px;line-height:1.5}
+.empty-state{text-align:center;padding:48px 20px;color:#ADB5BD}
+.empty-icon{font-size:48px;margin-bottom:12px;opacity:0.5}
+.empty-text{font-size:14px;color:#8A8A8A}
+.empty-hint{font-size:12px;color:#CED4DA;margin-top:8px;font-family:"Inter",sans-serif}
+.q-banner-wrap{position:relative;margin-bottom:28px}
+.q-banner-index{position:absolute;top:-8px;left:-8px;width:24px;height:24px;background:#C29F5D;color:#FFFFFF;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:"Inter",sans-serif;z-index:1}
+.q-banner{background:#0C1017;border-radius:14px;padding:16px 20px;color:#FFFFFF;font-size:14px;font-weight:500;border-left:none}
+.section-label{color:#8A8A8A;font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:16px;font-family:"Inter",sans-serif}
+.chips-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.chip{background:#F8F9FA;border:1px solid #E9ECEF;padding:6px 12px;border-radius:20px;color:#8A8A8A;font-size:12px}
+.chip.moving{background:#FFF5F5;border-color:#E05252;color:#E05252;font-weight:600}
+.hex-display-block{border-left:4px solid #C29F5D;padding-left:24px;margin-bottom:32px}
+.hex-main-title{font-size:36px;font-weight:700;color:#121212;margin-bottom:4px;text-align:center;letter-spacing:0.1em}
+.hex-main-sub{font-size:16px;color:#C29F5D;text-align:center;margin-bottom:8px;letter-spacing:0.05em}
+.hex-main-meta{font-size:12px;color:#ADB5BD;text-align:center;font-family:"Inter",sans-serif;margin-bottom:20px}
+.hex-pair{display:flex;gap:32px;justify-content:center;align-items:flex-start}
+.hex-unit{display:flex;gap:16px;align-items:flex-start}
+.hex-arrow{display:flex;align-items:center;color:#CED4DA;font-size:24px;padding:0 4px;font-family:"Inter",sans-serif;font-weight:300}
+.hex-lines{display:flex;flex-direction:column;gap:5px;width:72px;padding-top:4px}
+.hex-line-vis{height:7px;width:100%;display:flex;justify-content:space-between}
+.hex-line-vis.yang{background:#C29F5D;border-radius:2px}
+.hex-line-vis.yin .seg{width:44%;height:100%;background:#C29F5D;border-radius:2px}
+.hex-line-vis.yin .gap{width:12%}
+.hex-line-vis.moving.yang{background:#E05252}
+.hex-line-vis.moving.yin .seg{background:#E05252}
+.hex-meta{padding-top:2px}
+.hex-char{font-size:26px;font-weight:700;color:#121212;margin-bottom:2px}
+.hex-name{font-size:14px;color:#495057;margin-bottom:2px}
+.hex-sub{font-size:11px;color:#ADB5BD;font-family:"Inter",sans-serif}
+.tiyong-row{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:16px}
+.ty-card{width:140px;background:#F8F9FA;border:1px solid #E9ECEF;border-radius:16px;padding:16px;text-align:center}
+.ty-label{color:#8A8A8A;font-size:11px;font-family:"Inter",sans-serif;margin-bottom:8px}
+.ty-mini{display:flex;flex-direction:column;gap:4px;max-width:40px;margin:0 auto 8px}
+.ty-mini-line{height:4px;display:flex;justify-content:space-between}
+.ty-mini-line.yang{background:#C29F5D;border-radius:1px}
+.ty-mini-line.yin .s{width:44%;height:100%;background:#C29F5D;border-radius:1px}
+.ty-mini-line.yin .g{width:12%}
+.ty-name{color:#121212;font-size:16px;font-weight:600;margin-bottom:2px}
+.ty-elem{color:#8A8A8A;font-size:12px;font-family:"Inter",sans-serif}
+.ty-vs{color:#C29F5D;font-size:18px}
+.tiyong-interpret{background:#FDFBF7;border:1px solid #EAE2D1;border-radius:14px;padding:14px 20px;text-align:center;color:#C29F5D;font-size:14px;font-weight:500;line-height:1.6}
+.moving-row{display:flex;align-items:center;gap:12px;padding:16px 0;border-top:1px solid #F0F0F0}
+.moving-dot{width:8px;height:8px;background:#E05252;border-radius:50%}
+.moving-label{color:#8A8A8A;font-size:13px;font-family:"Inter",sans-serif}
+.moving-val{color:#121212;font-size:14px;font-weight:600}
+.derived-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
+.derived-card{background:#F8F9FA;border:1px solid #E9ECEF;border-radius:16px;padding:16px;display:flex;flex-direction:column;align-items:center}
+.derived-tag{color:#8A8A8A;font-size:11px;font-family:"Inter",sans-serif;margin-bottom:10px}
+.derived-mini{display:flex;flex-direction:column;gap:3px;width:32px}
+.derived-mini-line{height:3px;display:flex;justify-content:space-between}
+.derived-mini-line.yang{background:#C29F5D;border-radius:1px}
+.derived-mini-line.yin .s{width:44%;height:100%;background:#C29F5D;border-radius:1px}
+.derived-mini-line.yin .g{width:12%}
+.derived-name{color:#121212;font-size:14px;font-weight:600;margin-top:8px;margin-bottom:2px}
+.derived-sub{color:#ADB5BD;font-size:11px;font-family:"Inter",sans-serif}
+.toast-wrap{position:fixed;top:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{padding:12px 24px;border-radius:12px;font-family:"Inter","Noto Sans SC",sans-serif;font-size:13px;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,0.12);animation:toastIn 0.3s ease,toastOut 0.3s ease 2.5s forwards;pointer-events:auto}
+.toast.success{background:#27ae60}
+.toast.error{background:#c0392b}
+.toast.info{background:#2980b9}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{0%,70%{opacity:1}to{opacity:0;transform:translateY(-10px)}}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000}
+.modal-box{background:#FFFFFF;border:none;border-radius:20px;padding:28px;max-width:480px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15)}
+.modal-box h3{color:#121212;font-size:18px;margin-bottom:20px}
+.modal-body{color:#495057;line-height:1.8;margin-bottom:16px}
+.sample-item{padding:10px 14px;border-radius:10px;cursor:pointer;font-size:14px;color:#495057;transition:background 0.15s}
+.sample-item:hover{background:#F8F9FA;color:#C29F5D}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+.modal-btn{padding:8px 20px;border-radius:12px;font-size:13px;font-family:inherit;cursor:pointer;transition:all 0.2s}
+.modal-cancel{background:#F1F3F5;border:none;color:#495057}
+.modal-cancel:hover{background:#E9ECEF}
+.modal-confirm{background:#E05252;border:none;color:#fff}
+.modal-confirm:hover{background:#D03030}
+.app-footer{text-align:center;padding:40px 0 24px;color:#ADB5BD;font-size:11px;letter-spacing:0.04em;line-height:2;font-family:"Inter","Noto Sans SC",sans-serif}
+.app-footer .af-divider{color:#E9ECEF;margin:0 8px}
+.app-footer .af-warn{color:#C29F5D;font-weight:500}
+@media(max-width:900px){
+.app-shell{padding:16px}
+.main-layout{flex-direction:column}
+.left-panel{width:100%}
+.hex-pair{flex-direction:column;gap:24px}
+.derived-grid{grid-template-columns:1fr}
+.tiyong-row{flex-direction:column}
+.history-hdr{flex-direction:column;gap:12px;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="toast-wrap">
+<div v-for="t in toasts" :key="t.id" class="toast" :class="t.type">{{ t.msg }}</div>
+</div>
+<div class="app-shell">
+<a href="index.html" class="back-home">← 首页</a>
+<header class="app-header">
+<h1>易 经 占 卜</h1>
+<p class="subtitle">数字起卦 · 以心问天</p>
+</header>
+<div class="main-layout">
+<div class="left-panel">
+<div class="card">
+<div class="card-title">心中所问</div>
+<textarea class="question-area" v-model="question" placeholder="在此输入您的疑惑..."></textarea>
+<div style="margin-top:12px"><button class="link-btn" @click="showSamples = true">查看示例</button></div>
+</div>
+<div class="card">
+<div class="card-title">占卜方式</div>
+<div class="tabs">
+<button class="tab-btn" :class="{active:mode==='manual'}" @click="switchMode('manual')">手动</button>
+<button class="tab-btn" :class="{active:mode==='random'}" @click="switchMode('random')">随机</button>
+</div>
+<div v-if="mode==='random'">
+<div class="slot-row">
+<div class="slot-cell" v-for="(lbl,i) in yaoLabels" :key="i">
+<div class="slot-label">{{ lbl }}</div>
+<div class="slot-box" :class="{ active: castPhase==='running' && i===currentLine, locked: i < currentLine || castPhase==='done' }" @click="onSlotClick(i)">
+<template v-if="castPhase==='running' && i===currentLine">{{ displayNumber }}</template>
+<template v-else-if="i < currentLine || castPhase==='done'">{{ castNumbers[i] }}</template>
+<template v-else>—</template>
+</div>
+</div>
+</div>
+<div class="btn-stack">
+<button class="btn-primary" @click="startCasting">开始摇卦</button>
+<button v-if="castPhase==='running'" class="cast-hint" @click="onSlotClick(currentLine)">点击当前格或按 <kbd>Space</kbd> 停止 — 第 {{ currentLine + 1 }} / 6 爻</button>
+<div v-if="castPhase==='running'" class="status-bar">🔮 起卦中... ({{ currentLine + 1 }}/6)</div>
+<button v-if="castPhase==='done'" class="btn-exec" @click="processResult([...castNumbers])">求卦问卜</button>
+<button v-if="castPhase!=='idle'" class="btn-reset" @click="resetCasting">消除结果 (保留问题)</button>
+</div>
+</div>
+<div v-if="mode==='manual'">
+<div class="manual-grid">
+<div class="manual-cell" v-for="(lbl,i) in yaoLabels" :key="i">
+<label>{{ lbl }}</label>
+<input type="number" min="1" :placeholder="lbl" v-model.number="manualNumbers[i]" @keydown.enter="directSubmit">
+</div>
+</div>
+<div class="btn-stack">
+<button class="btn-exec" @click="directSubmit">求卦问卜</button>
+<button class="btn-reset" @click="resetCasting">消除结果 (保留问题)</button>
+</div>
+</div>
+</div>
+</div>
+<div class="right-panel">
+<div class="card">
+<div class="history-hdr">
+<div class="history-title">连占记录<span v-if="history.length" class="history-badge">{{ history.length }}</span></div>
+<div class="history-actions" v-if="history.length">
+<button class="ha-btn" @click="copyAllRecords">📋 复制所有记录</button>
+<button class="ha-btn danger" @click="showClearConfirm = true">🗑 清空记录</button>
+</div>
+</div>
+<div v-if="history.length === 0" class="empty-state">
+<div class="empty-icon">☯️</div>
+<div class="empty-text">尚无占卜记录</div>
+<div class="empty-hint">输入心中所问，开始第一次占卜</div>
+</div>
+<div v-else>
+<div v-for="item in history" :key="item.id" class="hi-card" :class="{ active: activeHistoryId === item.id }" @click="displayHistoryItem(item)">
+<div class="hi-time">{{ formatTime(item.timestamp) }}</div>
+<div class="hi-question">{{ item.question || '（未输入问题）' }}</div>
+<div class="hi-summary">{{ item.result.primary.name }} · {{ item.result.tiYong.relation ? wuxingText[item.result.tiYong.relation] : '' }} — 动爻: {{ movingLineText(item.result.yaos) || '无' }} — 变卦: {{ item.result.changed.name }}</div>
+</div>
+</div>
+</div>
+<div v-if="result" class="card">
+<div v-if="displayedQuestion" class="q-banner-wrap">
+<div class="q-banner-index">1</div>
+<div class="q-banner">提问：{{ displayedQuestion }}</div>
+</div>
+<div class="section-label">六 爻</div>
+<div class="chips-row">
+<span v-for="(y,i) in result.yaos" :key="i" class="chip" :class="{moving:y.mutability==='moving'}">{{ yaoLabels[i] }} {{ y.symbol }} {{ y.fourSymbol }}{{ y.mutability==='moving' ? ' 动' : '' }}</span>
+</div>
+<div class="hex-display-block">
+<div class="hex-main-title">{{ result.primary.character }} {{ result.primary.name }}</div>
+<div class="hex-main-sub">{{ result.primary.upperTrigram.symbol }}{{ result.primary.upperTrigram.name }}上 {{ result.primary.lowerTrigram.symbol }}{{ result.primary.lowerTrigram.name }}下</div>
+<div class="hex-main-meta">{{ result.primary.pinyin }} · #{{ result.primary.number }}</div>
+<div class="hex-pair">
+<div class="hex-unit">
+<div class="hex-lines">
+<div v-for="i in 6" :key="'p'+i" class="hex-line-vis" :class="[result.primary.yaos[6-i].polarity, {moving:result.primary.yaos[6-i].mutability==='moving'}]">
+<template v-if="result.primary.yaos[6-i].polarity==='yang'"></template>
+<template v-else><span class="seg"></span><span class="gap"></span><span class="seg"></span></template>
+</div>
+</div>
+<div class="hex-meta">
+<div class="hex-char">{{ result.primary.character }}</div>
+<div class="hex-name">{{ result.primary.name }}为{{ result.primary.name }}</div>
+<div class="hex-sub">{{ result.primary.upperTrigram.symbol }}{{ result.primary.upperTrigram.name }}上 {{ result.primary.lowerTrigram.symbol }}{{ result.primary.lowerTrigram.name }}下</div>
+</div>
+</div>
+<div class="hex-arrow">→</div>
+<div class="hex-unit">
+<div class="hex-lines">
+<div v-for="i in 6" :key="'c'+i" class="hex-line-vis" :class="result.changed.yaos[6-i].polarity">
+<template v-if="result.changed.yaos[6-i].polarity==='yang'"></template>
+<template v-else><span class="seg"></span><span class="gap"></span><span class="seg"></span></template>
+</div>
+</div>
+<div class="hex-meta">
+<div class="hex-char">{{ result.changed.character }}</div>
+<div class="hex-name">{{ result.changed.name }}</div>
+<div class="hex-sub">{{ result.changed.pinyin }} · #{{ result.changed.number }}</div>
+</div>
+</div>
+</div>
+</div>
+<div class="moving-row" v-if="movingLineText(result.yaos)">
+<span class="moving-dot"></span>
+<span class="moving-label">动爻</span>
+<span class="moving-val">{{ movingLineText(result.yaos) }}</span>
+</div>
+<div class="moving-row" v-else>
+<span class="moving-dot" style="background:#CED4DA"></span>
+<span class="moving-label">动爻</span>
+<span class="moving-val" style="color:#ADB5BD">无动爻（静卦）</span>
+</div>
+<div class="section-label" style="margin-top:24px">其 他 卦 象</div>
+<div class="derived-grid">
+<div class="derived-card" v-for="d in [
+  {label:'互卦', h: result.nuclear},
+  {label:'综卦', h: result.reversed},
+  {label:'错卦', h: result.opposite}
+]" :key="d.label">
+<div class="derived-tag">{{ d.label }}</div>
+<div class="derived-mini">
+  <template v-for="(l,li) in getDerivedLines(d.h)" :key="d.label+li">
+    <div class="derived-mini-line" :class="l">
+      <template v-if="l==='yang'"></template>
+      <template v-else><span class="s"></span><span class="g"></span><span class="s"></span></template>
+    </div>
+  </template>
+</div>
+<div class="derived-name">{{ d.h.name }}</div>
+<div class="derived-sub">{{ d.h.pinyin }}</div>
+</div>
+</div>
+<div class="section-label">体 用 卦</div>
+<div class="tiyong-row">
+<div class="ty-card">
+<div class="ty-label">体卦 · 主事者</div>
+<div class="ty-mini">
+<div v-for="(l,li) in trigramLines(result.tiYong.subject.name)" :key="'ts'+li" class="ty-mini-line" :class="l">
+<template v-if="l==='yang'"></template>
+<template v-else><span class="s"></span><span class="g"></span><span class="s"></span></template>
+</div>
+</div>
+<div class="ty-name">{{ result.tiYong.subject.name }}</div>
+<div class="ty-elem">{{ result.tiYong.subject.element }}</div>
+</div>
+<div class="ty-vs">⚡</div>
+<div class="ty-card">
+<div class="ty-label">用卦 · 应事</div>
+<div class="ty-mini">
+<div v-for="(l,li) in trigramLines(result.tiYong.object.name)" :key="'to'+li" class="ty-mini-line" :class="l">
+<template v-if="l==='yang'"></template>
+<template v-else><span class="s"></span><span class="g"></span><span class="s"></span></template>
+</div>
+</div>
+<div class="ty-name">{{ result.tiYong.object.name }}</div>
+<div class="ty-elem">{{ result.tiYong.object.element }}</div>
+</div>
+</div>
+<div class="tiyong-interpret">{{ wuxingText[result.tiYong.relation] }}</div>
+</div>
+<div v-if="!result" class="card">
+<div class="empty-state">
+<div class="empty-icon">🔮</div>
+<div class="empty-text">等待占卜...</div>
+<div class="empty-hint">在左侧面板输入问题并开始占卜</div>
+</div>
+</div>
+</div>
+</div>
+<footer class="app-footer">
+<div class="af-warn">⚠️ 免责声明：本工具基于随机数生成卦象，结果仅供娱乐参考，不构成任何决策建议。</div>
+<div style="margin-top:6px">
+🔒 你的数据仅储存在本地设备上 <span class="af-divider">|</span> 无服务器 <span class="af-divider">|</span> 无追踪 <span class="af-divider">|</span> 关闭页面即清空
+</div>
+<div style="margin-top:12px;color:#CED4DA">易经占卜 · 数字起卦法</div>
+</footer>
+</div>
+<div v-if="showSamples" class="modal-overlay" @click.self="showSamples = false">
+<div class="modal-box">
+<h3>📋 示例问题</h3>
+<div class="sample-item" v-for="(q,i) in sampleQuestions" :key="i" @click="question = q; showSamples = false">{{ q }}</div>
+<div class="modal-actions"><button class="modal-btn modal-cancel" @click="showSamples = false">关闭</button></div>
+</div>
+</div>
+<div v-if="showClearConfirm" class="modal-overlay" @click.self="showClearConfirm = false">
+<div class="modal-box">
+<h3>⚠️ 确认清空</h3>
+<p class="modal-body">确定要清空所有占卜记录吗？<br>此操作不可撤销。</p>
+<div class="modal-actions">
+<button class="modal-btn modal-cancel" @click="showClearConfirm = false">取消</button>
+<button class="modal-btn modal-confirm" @click="clearHistory">确定清空</button>
+</div>
+</div>
+</div>
+</div>
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="iChing.js"></script>
+<script>
+const { createApp, ref, reactive, nextTick, onMounted, onUnmounted } = Vue;
+createApp({
+  setup() {
+    const question = ref('');
+    const displayedQuestion = ref('');
+    const mode = ref('random');
+    const showSamples = ref(false);
+    const showClearConfirm = ref(false);
+    const manualNumbers = reactive([null,null,null,null,null,null]);
+    const result = ref(null);
+    const history = reactive([]);
+    const activeHistoryId = ref(null);
+    const toasts = reactive([]);
+    const yaoLabels = ['初爻','二爻','三爻','四爻','五爻','上爻'];
+    const sampleQuestions = [
+      '我近期的事业运势如何？','这段感情的发展方向如何？','我是否应该接受这份工作？',
+      '近期需要注意什么健康问题？','这个投资项目是否可行？','如何改善目前的人际关系？',
+      '考试/面试的结果会怎样？','目前的困境何时能够化解？',
+    ];
+    const wuxingText = {
+      'subject-controls': '体克用 — 我克制局势，主动权在握，宜果断行事',
+      'object-controls':  '用克体 — 局势压制于我，阻力重重，宜谨慎守拙',
+      'subject-produces': '体生用 — 我为局势付出，精力外泄，切忌过度消耗',
+      'object-produces':  '用生体 — 局势滋养于我，贵人相助，机遇自来',
+      'same-element':     '体用同 — 体用比和，能量均衡，诸事平顺',
+    };
+    const castPhase = ref('idle');
+    const currentLine = ref(0);
+    const castNumbers = reactive([0,0,0,0,0,0]);
+    const displayNumber = ref(0);
+    let cycleTimer = null;
+    function showToast(msg, type = 'success') {
+      const id = Date.now();
+      toasts.push({ id, msg, type });
+      setTimeout(() => { const idx = toasts.findIndex(t => t.id === id); if (idx !== -1) toasts.splice(idx, 1); }, 3000);
+    }
+    function trigramLines(name) {
+      const t = typeof TRIGRAMS !== 'undefined' ? Object.values(TRIGRAMS).find(t => t.name === name) : null;
+      if (!t || !t.binary) return ['yang','yang','yang'];
+      return t.binary.split('').reverse().map(b => b === '1' ? 'yang' : 'yin');
+    }
+    function getDerivedLines(hex) {
+      const upper = trigramLines(hex.upperTrigram.name);
+      const lower = trigramLines(hex.lowerTrigram.name);
+      return [...upper, ...lower];
+    }
+    function switchMode(m) {
+      if (castPhase.value === 'running') return;
+      mode.value = m;
+      resetCasting();
+    }
+    function startCasting() {
+      resetCasting();
+      castPhase.value = 'running';
+      currentLine.value = 0;
+      cycleTimer = setInterval(() => { displayNumber.value = Math.floor(Math.random() * 999) + 1; }, 50);
+    }
+    function stopCurrentLine() {
+      if (castPhase.value !== 'running') return;
+      castNumbers[currentLine.value] = displayNumber.value;
+      if (currentLine.value < 5) {
+        currentLine.value++;
+      } else {
+        clearInterval(cycleTimer);
+        cycleTimer = null;
+        castPhase.value = 'done';
+        nextTick(() => processResult([...castNumbers]));
+      }
+    }
+    function onSlotClick(i) {
+      if (castPhase.value === 'running' && i === currentLine.value) {
+        stopCurrentLine();
+      }
+    }
+    function directSubmit() {
+      const nums = [...manualNumbers];
+      if (nums.length !== 6 || nums.some(n => !n || n < 1)) {
+        showToast('请输入六个正整数', 'error');
+        return;
+      }
+      processResult(nums);
+    }
+    function processResult(numbers) {
+      if (typeof divine === 'undefined') {
+        showToast('iChing.js 未加载', 'error');
+        return;
+      }
+      try {
+        const r = divine(numbers);
+        const q = question.value;
+        displayedQuestion.value = q;
+        result.value = r;
+        history.unshift({
+          id: Date.now() + '_' + Math.random().toString(36).slice(2,6),
+          timestamp: new Date().toISOString(),
+          question: q,
+          numbers: [...numbers],
+          result: r,
+        });
+        activeHistoryId.value = history[0].id;
+        question.value = '';
+        resetCasting();
+      } catch (err) {
+        showToast('占卜出错: ' + err.message, 'error');
+      }
+    }
+    function resetCasting() {
+      if (cycleTimer) { clearInterval(cycleTimer); cycleTimer = null; }
+      castPhase.value = 'idle';
+      currentLine.value = 0;
+      for (let i = 0; i < 6; i++) { castNumbers[i] = 0; manualNumbers[i] = null; }
+      displayNumber.value = 0;
+    }
+    function displayHistoryItem(item) {
+      result.value = item.result;
+      displayedQuestion.value = item.question;
+      activeHistoryId.value = item.id;
+    }
+    function clearHistory() {
+      history.splice(0, history.length);
+      activeHistoryId.value = null;
+      result.value = null;
+      displayedQuestion.value = '';
+      showClearConfirm.value = false;
+      showToast('记录已清空', 'info');
+    }
+    function movingLineText(yaos) {
+      const pos = ['初','二','三','四','五','上'];
+      return yaos.map((y,i) => {
+        if (y.mutability !== 'moving') return null;
+        const p = y.polarity === 'yang' ? '九' : '六';
+        if (i === 0) return '初' + p;
+        if (i === 5) return p + '上';
+        return p + pos[i];
+      }).filter(Boolean).join('、');
+    }
+    async function copyAllRecords() {
+      const lines = [...history].reverse().map(item => {
+        const r = item.result;
+        return [
+          `[${item.timestamp}]`,
+          `提问：${item.question || '（未输入问题）'}`,
+          `本卦：${r.primary.name}${r.primary.pinyin ? ' (' + r.primary.pinyin + ')' : ''} (动爻: ${movingLineText(r.yaos) || '无'})。变卦：${r.changed.name}。`,
+          `体卦：${r.tiYong.subject.name}　用卦：${r.tiYong.object.name}`,
+          `互卦：${r.nuclear.name}。综卦：${r.reversed.name}。错卦：${r.opposite.name}。`,
+        ].join('\n');
+      });
+      const text = lines.join('\n\n');
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast('已复制 ' + history.length + ' 条记录', 'success');
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;left:-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('已复制 ' + history.length + ' 条记录', 'success');
+      }
+    }
+    function formatTime(iso) {
+      const d = new Date(iso);
+      const pad = n => String(n).padStart(2,'0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+    function onKeyDown(e) {
+      if (e.code === 'Space' && castPhase.value === 'running') {
+        e.preventDefault();
+        stopCurrentLine();
+      }
+    }
+    onMounted(() => document.addEventListener('keydown', onKeyDown));
+    onUnmounted(() => document.removeEventListener('keydown', onKeyDown));
+    return {
+      question, displayedQuestion, mode, showSamples, showClearConfirm,
+      manualNumbers, result, history, activeHistoryId, toasts,
+      yaoLabels, sampleQuestions, wuxingText,
+      castPhase, currentLine, castNumbers, displayNumber,
+      switchMode, startCasting, stopCurrentLine, onSlotClick,
+      directSubmit, processResult, resetCasting,
+      displayHistoryItem, clearHistory, copyAllRecords,
+      movingLineText, trigramLines, getDerivedLines, formatTime, showToast,
+    };
+  }
+}).mount('#app');
+</script>
+</body>
+</html>
