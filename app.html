@@ -189,7 +189,7 @@ a{color:#C29F5D}
 </div>
 </div>
 <div class="btn-stack">
-<button class="btn-primary" @click="startCasting">开始摇卦</button>
+<button v-if="castPhase !== 'running'" class="btn-primary" @click="startCasting">开始摇卦</button>
 <button v-if="castPhase==='running'" class="cast-hint" @click="onSlotClick(currentLine)">点击当前格或按 <kbd>Space</kbd> 停止 — 第 {{ currentLine + 1 }} / 6 爻</button>
 <div v-if="castPhase==='running'" class="status-bar">🔮 起卦中... ({{ currentLine + 1 }}/6)</div>
 <button v-if="castPhase==='done'" class="btn-exec" @click="processResult([...castNumbers])">求卦问卜</button>
@@ -347,7 +347,8 @@ a{color:#C29F5D}
 <div style="margin-top:6px">
 🔒 你的数据仅储存在本地设备上 <span class="af-divider">|</span> 无服务器 <span class="af-divider">|</span> 无追踪 <span class="af-divider">|</span> 关闭页面即清空
 </div>
-<div style="margin-top:12px;color:#CED4DA">易经占卜 · 数字起卦法</div>
+<div style="margin-top:12px;color:#CED4DA">Powered by <a href="https://github.com/bnchiang96/iChing-JS" target="_blank" rel="noopener" style="color:#CED4DA">iChing-JS</a></div>
+<div style="margin-top:4px;color:#CED4DA">易经占卜 · 数字起卦法</div>
 </footer>
 </div>
 <div v-if="showSamples" class="modal-overlay" @click.self="showSamples = false">
