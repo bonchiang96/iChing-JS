@@ -1,0 +1,80 @@
+/* 易经占卜 — shared ink-wash theme */
+:root{
+  --paper:#F3EDE1;
+  --paper-deep:#EAE2D2;
+  --paper-card:#F8F4EB;
+  --ink:#1D1B18;
+  --ink-2:#3E3A33;
+  --ink-3:#6F685C;
+  --ink-4:#9C9484;
+  --rule:#D6CCB8;
+  --rule-soft:#E4DCCB;
+  --cinnabar:#A8332A;
+  --cinnabar-soft:#C4574B;
+  --cinnabar-wash:rgba(168,51,42,0.08);
+  --font-serif:"Noto Serif SC","Source Han Serif SC","Songti SC",Georgia,serif;
+  --font-brush:"Ma Shan Zheng","Noto Serif SC",serif;
+  --font-latin:"Cormorant Garamond",Georgia,serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background-color:var(--paper);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.3 0 0 0 0 0.22 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  color:var(--ink);
+  font-family:var(--font-serif);
+  line-height:1.85;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+a{color:var(--cinnabar);text-decoration:none;border-bottom:1px solid rgba(168,51,42,0.35);transition:border-color .2s,color .2s}
+a:hover{border-bottom-color:var(--cinnabar)}
+::selection{background:var(--cinnabar-wash);color:var(--ink)}
+
+/* seal stamp */
+.seal{
+  display:inline-flex;align-items:center;justify-content:center;
+  font-family:var(--font-brush);color:var(--paper);background:var(--cinnabar);
+  border-radius:4px;line-height:1;
+  box-shadow:inset 0 0 0 2px var(--cinnabar),inset 0 0 0 3.5px rgba(243,237,225,0.75);
+  filter:url(#rough);
+}
+.seal-outline{background:transparent;color:var(--cinnabar);box-shadow:inset 0 0 0 2px var(--cinnabar)}
+
+/* buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  font-family:var(--font-serif);font-size:16px;letter-spacing:.3em;text-indent:.3em;
+  padding:14px 40px;border-radius:2px;cursor:pointer;border:none;
+  transition:background .2s,color .2s,box-shadow .2s,transform .15s;
+}
+.btn:active{transform:translateY(1px)}
+.btn-ink{background:var(--ink);color:var(--paper);border-bottom:none}
+.btn-ink:hover{background:#000;box-shadow:0 6px 18px rgba(29,27,24,.22);border-bottom:none}
+.btn-seal{background:var(--cinnabar);color:#FBF6EC;border-bottom:none}
+.btn-seal:hover{background:#922A22;box-shadow:0 6px 18px rgba(168,51,42,.28);border-bottom:none}
+.btn-ghost{background:transparent;color:var(--ink-3);box-shadow:inset 0 0 0 1px var(--rule);letter-spacing:.12em;text-indent:.12em;font-size:14px;padding:11px 24px}
+.btn-ghost:hover{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink-3)}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--cinnabar);outline-offset:3px}
+
+/* section heading with chinese numeral */
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:22px}
+.sec-num{font-family:var(--font-brush);font-size:30px;color:var(--cinnabar);line-height:1}
+.sec-title{font-size:22px;font-weight:700;letter-spacing:.12em}
+.sec-rule{flex:1;height:1px;background:linear-gradient(90deg,var(--rule),transparent)}
+
+/* hexagram lines (brush) */
+.hx{display:flex;flex-direction:column;gap:var(--hx-gap,8px);width:var(--hx-w,96px)}
+.hx-line{position:relative;height:var(--hx-h,11px);display:flex;justify-content:space-between}
+.hx-line .bar{height:100%;background:var(--ink);border-radius:1px 3px 2px 1px;filter:url(#brush)}
+.hx-line.yang .bar{width:100%}
+.hx-line.yin .bar{width:43%}
+.hx-line.moving .bar{background:var(--cinnabar)}
+.hx-line.blank .bar{background:transparent;box-shadow:inset 0 0 0 1px var(--rule);filter:none;width:100%}
+.hx-mark{position:absolute;right:calc(-1 * var(--hx-mark-off,22px));top:50%;transform:translateY(-50%);font-size:var(--hx-mark-size,13px);color:var(--cinnabar);line-height:1;font-family:var(--font-serif)}
+
+.muted{color:var(--ink-3)}
+.latin{font-family:var(--font-latin);font-style:italic;letter-spacing:.02em}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
