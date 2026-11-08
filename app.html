@@ -69,7 +69,26 @@
 @keyframes breathe{0%,100%{opacity:.5}50%{opacity:1}}
 
 /* history */
-.hist-actions{display:flex;gap:18px;margin:-6px 0 14px}
+.col-right{display:flex;flex-direction:column;gap:40px;min-width:0}
+.btn-sm{padding:8px 16px;font-size:13px;letter-spacing:.12em;text-indent:0;gap:7px}
+.btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.btn-danger{background:transparent;color:var(--cinnabar);box-shadow:inset 0 0 0 1px var(--cinnabar-soft)}
+.btn-danger:hover{background:var(--cinnabar);color:#FBF6EC;box-shadow:none}
+.hist-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.hist-tip{font-size:13px;color:var(--ink-3);letter-spacing:.1em}
+.hist-btns{display:flex;gap:10px}
+.hist-grid{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;max-height:340px;overflow:auto;padding:2px}
+.hist-card{position:relative;padding:12px 14px;background:var(--paper-card);border:1px solid var(--rule);cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s}
+.hist-card:hover{border-color:var(--ink-3)}
+.hist-card.on{border-color:var(--ink);box-shadow:inset 3px 0 0 var(--cinnabar);background:#FBF7EE}
+.hist-card:focus-visible{outline:2px solid var(--cinnabar);outline-offset:2px}
+.hc-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.hc-no{font-size:12px;letter-spacing:.2em;color:var(--cinnabar);font-weight:700}
+.hc-time{font-family:var(--font-latin);font-size:13px;color:var(--ink-4)}
+.hc-q{font-size:14px;color:var(--ink);line-height:1.55;min-height:2.6em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.hc-hex{display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--rule-soft);font-size:13px;color:var(--ink-2)}
+.hc-char{font-size:22px;line-height:1;color:var(--ink)}
+.hist-card.on .hc-char{color:var(--cinnabar)}
 .hist-list{list-style:none;max-height:420px;overflow:auto;border-top:1px solid var(--rule)}
 .hist-item{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:14px 6px;border-bottom:1px solid var(--rule-soft);cursor:pointer;transition:background .15s}
 .hist-item:hover{background:rgba(29,27,24,.03)}
@@ -183,7 +202,7 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
 @media (max-width:1000px){
   .layout{grid-template-columns:1fr;gap:40px}
   .col-left{display:contents}
-  .panel-q{order:1}.panel-cast{order:2}.col-right{order:3}.panel-hist{order:4}
+  .panel-q{order:1}.panel-cast{order:2}.col-right{order:3}
 }
 @media (max-width:640px){
   .shell{padding:16px 16px 48px}
@@ -277,33 +296,37 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
         </div>
       </section>
 
-      <!-- 连占记录 -->
-      <section class="panel panel-hist">
-        <div class="sec-head"><span class="sec-num">录</span><h2 class="sec-title">连占记录<span v-if="history.length" class="count-seal">{{ history.length }}</span></h2><span class="sec-rule"></span></div>
-        <template v-if="history.length">
-          <div class="hist-actions">
-            <button class="text-btn" @click="copyAllRecords">复制所有记录</button>
-            <button class="text-btn" @click="showClearConfirm = true">清空记录</button>
-          </div>
-          <ul class="hist-list">
-            <li v-for="item in history" :key="item.id" class="hist-item" :class="{ on: activeHistoryId === item.id }" @click="displayHistoryItem(item)">
-              <span class="hist-char">{{ item.result.primary.character }}</span>
-              <div>
-                <div class="hist-q">{{ item.question || '（未输入问题）' }}</div>
-                <div class="hist-meta">{{ item.result.primary.name }} → {{ item.result.changed.name }} · 动爻 {{ movingLineText(item.result.yaos) || '无' }}</div>
-                <div class="hist-time">{{ formatTime(item.timestamp) }}</div>
-              </div>
-            </li>
-          </ul>
-        </template>
-        <div v-else class="hist-empty">尚无记录 · 每一卦都会留在这里，直到关闭页面</div>
-      </section>
     </div>
 
-    <!-- 三 · 卦象 -->
     <div class="col-right">
+      <!-- 三 · 连占记录 -->
+      <section class="panel panel-hist" v-if="history.length">
+        <div class="sec-head"><span class="sec-num">三</span><h2 class="sec-title">连占记录<span class="count-seal">{{ history.length }}</span></h2><span class="sec-rule"></span></div>
+        <div class="hist-bar">
+          <span class="hist-tip">点选任一卦，查看卦象</span>
+          <div class="hist-btns">
+            <button class="btn btn-sm btn-ink" @click="copyAllRecords">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M11 5V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h2"/></svg>复制所有记录
+            </button>
+            <button class="btn btn-sm btn-danger" @click="showClearConfirm = true">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4M6.8 6.5v4.5M9.2 6.5v4.5"/></svg>清空记录
+            </button>
+          </div>
+        </div>
+        <ol class="hist-grid">
+          <li v-for="(item,idx) in chronological" :key="item.id" class="hist-card" :class="{ on: activeHistoryId === item.id }"
+              role="button" tabindex="0" :aria-pressed="activeHistoryId === item.id"
+              @click="displayHistoryItem(item)" @keydown.enter.prevent="displayHistoryItem(item)" @keydown.space.prevent="displayHistoryItem(item)">
+            <div class="hc-top"><span class="hc-no">第 {{ idx+1 }} 问</span><span class="hc-time">{{ formatTime(item.timestamp).slice(11,16) }}</span></div>
+            <div class="hc-q">{{ item.question || '（未输入问题）' }}</div>
+            <div class="hc-hex"><span class="hc-char">{{ item.result.primary.character }}</span>{{ item.result.primary.name }} → {{ item.result.changed.name }}</div>
+          </li>
+        </ol>
+      </section>
+
+      <!-- 卦象 -->
       <section class="panel">
-        <div class="sec-head"><span class="sec-num">三</span><h2 class="sec-title">卦象</h2><span class="sec-rule"></span></div>
+        <div class="sec-head"><span class="sec-num">{{ history.length ? '四' : '三' }}</span><h2 class="sec-title">卦象</h2><span class="sec-rule"></span></div>
 
         <div v-if="!result" class="empty">
           <div class="glyph">卦</div>
@@ -312,11 +335,6 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
         </div>
 
         <article v-else class="result" :class="{reveal: revealKey}" :key="revealKey">
-          <div class="series" v-if="history.length">
-            <span class="series-lbl">连占</span>
-            <button v-for="(item,idx) in chronological" :key="item.id" class="series-chip" :class="{on: item.id===activeHistoryId}" @click="displayHistoryItem(item)">第{{ idx+1 }}问 · {{ item.result.primary.name }}</button>
-            <button class="series-chip add" @click="nextQuestion">＋ 下一问</button>
-          </div>
           <div class="q-quote"><span class="q-quote-lbl">第 {{ activeNo }} 问</span>{{ displayedQuestion || '（未输入问题）' }}</div>
 
           <div class="main-hex">
@@ -572,7 +590,7 @@ createApp({
         question.value = '';
         resetCasting();
         if (window.matchMedia('(max-width:1000px)').matches) {
-          nextTick(() => document.querySelector('.col-right')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+          nextTick(() => document.querySelector('.result')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
         }
       } catch (err) {
         showToast('占卜出错: ' + err.message, 'error');
