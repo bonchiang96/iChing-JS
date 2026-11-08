@@ -429,9 +429,8 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
           <div class="res-actions">
             <button class="btn btn-ghost" @click="copyCurrent">复制此卦</button>
             <button class="btn btn-ink" @click="copyAllRecords">复制全部 {{ history.length }} 卦</button>
-            <button class="btn btn-seal" @click="nextQuestion">继续下一问</button>
           </div>
-          <p class="res-note">一事多问：继续写下一个问题再摇卦，所有卦象都会记录在「连占」中，可一键全部复制，一起发给 AI 综合解读。</p>
+          <p class="res-note">一事多问：直接在左侧写下一个问题再摇卦，每一卦都会记录在「连占记录」中，可一键全部复制，一起发给 AI 综合解读。</p>
         </article>
       </section>
     </div>
@@ -660,12 +659,6 @@ createApp({
       const i = history.findIndex(h => h.id === activeHistoryId.value);
       return i === -1 ? 1 : history.length - i;
     });
-    function nextQuestion() {
-      if (castPhase.value === 'running') return;
-      resetCasting();
-      const q = document.querySelector('.q-area');
-      if (q) { q.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => q.focus({ preventScroll: true }), 300); }
-    }
     function formatTime(iso) {
       const d = new Date(iso);
       const pad = n => String(n).padStart(2,'0');
@@ -684,7 +677,7 @@ createApp({
       switchMode, startCasting, stopCurrentLine, onSlotClick,
       directSubmit, processResult, resetCasting,
       displayHistoryItem, clearHistory, copyAllRecords, copyCurrent,
-      chronological, activeNo, nextQuestion,
+      chronological, activeNo,
       movingLineText, trigramLines, topDown, rowLine, rowLineClass, fullName, formatTime,
     };
   }
