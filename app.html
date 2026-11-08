@@ -132,7 +132,15 @@
 .ty-rel{font-family:var(--font-brush);font-size:26px;color:var(--cinnabar);text-align:center;line-height:1.2}
 .ty-text{margin-top:16px;padding:14px 18px;background:var(--cinnabar-wash);color:var(--ink);font-size:15px;line-height:1.8;text-align:center;letter-spacing:.04em}
 
-.res-actions{display:flex;justify-content:center;gap:12px;margin-top:34px}
+.res-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:34px}
+.res-actions .btn{padding:12px 26px;font-size:15px;letter-spacing:.18em}
+.res-note{margin-top:14px;text-align:center;font-size:13px;color:var(--ink-3);line-height:1.8}
+.series{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:26px}
+.series-lbl{font-size:12px;letter-spacing:.3em;color:var(--ink-4);margin-right:4px}
+.series-chip{background:var(--paper);border:1px solid var(--rule);font:inherit;font-size:13px;color:var(--ink-2);padding:4px 12px;cursor:pointer;letter-spacing:.05em;transition:all .15s}
+.series-chip:hover{border-color:var(--ink-3);color:var(--ink)}
+.series-chip.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.series-chip.add{border-style:dashed;color:var(--cinnabar);border-color:var(--cinnabar-soft)}
 
 /* empty */
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:72px 20px;color:var(--ink-3);border:1px dashed var(--rule)}
@@ -304,7 +312,12 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
         </div>
 
         <article v-else class="result" :class="{reveal: revealKey}" :key="revealKey">
-          <div v-if="displayedQuestion" class="q-quote"><span class="q-quote-lbl">所 问</span>{{ displayedQuestion }}</div>
+          <div class="series" v-if="history.length">
+            <span class="series-lbl">连占</span>
+            <button v-for="(item,idx) in chronological" :key="item.id" class="series-chip" :class="{on: item.id===activeHistoryId}" @click="displayHistoryItem(item)">第{{ idx+1 }}问 · {{ item.result.primary.name }}</button>
+            <button class="series-chip add" @click="nextQuestion">＋ 下一问</button>
+          </div>
+          <div class="q-quote"><span class="q-quote-lbl">第 {{ activeNo }} 问</span>{{ displayedQuestion || '（未输入问题）' }}</div>
 
           <div class="main-hex">
             <div class="hex-card primary">
@@ -396,9 +409,11 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
           <div class="ty-text">{{ wuxingText[result.tiYong.relation] }}</div>
 
           <div class="res-actions">
-            <button class="btn btn-ink" @click="copyCurrent">复制此卦</button>
-            <button class="btn btn-ghost" v-if="history.length > 1" @click="copyAllRecords">复制全部 {{ history.length }} 卦</button>
+            <button class="btn btn-ghost" @click="copyCurrent">复制此卦</button>
+            <button class="btn btn-ink" @click="copyAllRecords">复制全部 {{ history.length }} 卦</button>
+            <button class="btn btn-seal" @click="nextQuestion">继续下一问</button>
           </div>
+          <p class="res-note">一事多问：继续写下一个问题再摇卦，所有卦象都会记录在「连占」中，可一键全部复制，一起发给 AI 综合解读。</p>
         </article>
       </section>
     </div>
@@ -433,7 +448,7 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
 <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.prod.js"></script>
 <script src="iChing.js"></script>
 <script>
-const { createApp, ref, reactive, nextTick, onMounted, onUnmounted } = Vue;
+const { createApp, ref, reactive, computed, nextTick, onMounted, onUnmounted } = Vue;
 createApp({
   setup() {
     const question = ref('');
@@ -555,7 +570,7 @@ createApp({
         });
         activeHistoryId.value = history[0].id;
         question.value = '';
-        if (mode.value === 'manual') resetCasting();
+        resetCasting();
         if (window.matchMedia('(max-width:1000px)').matches) {
           nextTick(() => document.querySelector('.col-right')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
         }
@@ -622,6 +637,17 @@ createApp({
       const item = history.find(h => h.id === activeHistoryId.value);
       if (item) copyText(recordText(item), '已复制此卦');
     }
+    const chronological = computed(() => [...history].reverse());
+    const activeNo = computed(() => {
+      const i = history.findIndex(h => h.id === activeHistoryId.value);
+      return i === -1 ? 1 : history.length - i;
+    });
+    function nextQuestion() {
+      if (castPhase.value === 'running') return;
+      resetCasting();
+      const q = document.querySelector('.q-area');
+      if (q) { q.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => q.focus({ preventScroll: true }), 300); }
+    }
     function formatTime(iso) {
       const d = new Date(iso);
       const pad = n => String(n).padStart(2,'0');
@@ -640,6 +666,7 @@ createApp({
       switchMode, startCasting, stopCurrentLine, onSlotClick,
       directSubmit, processResult, resetCasting,
       displayHistoryItem, clearHistory, copyAllRecords, copyCurrent,
+      chronological, activeNo, nextQuestion,
       movingLineText, trigramLines, topDown, rowLine, rowLineClass, fullName, formatTime,
     };
   }
