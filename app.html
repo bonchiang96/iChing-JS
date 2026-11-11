@@ -65,6 +65,9 @@
 .actions .btn{width:100%}
 .hint{font-size:13px;color:var(--ink-3);text-align:center;letter-spacing:.06em}
 .hint kbd{font-family:var(--font-latin);font-size:13px;border:1px solid var(--rule);border-bottom-width:2px;padding:0 6px;margin:0 2px;background:var(--paper-card)}
+.btn-stop{position:relative;animation:stopPulse 1.4s ease-in-out infinite}
+.btn-stop .stop-count{font-family:var(--font-latin);font-size:14px;letter-spacing:.05em;opacity:.8;margin-left:6px;text-indent:0}
+@keyframes stopPulse{0%,100%{box-shadow:0 0 0 0 rgba(168,51,42,.35)}50%{box-shadow:0 0 0 6px rgba(168,51,42,0)}}
 .casting-status{font-size:13px;color:var(--cinnabar);text-align:center;letter-spacing:.2em;animation:breathe 1.6s ease-in-out infinite}
 @keyframes breathe{0%,100%{opacity:.5}50%{opacity:1}}
 
@@ -191,6 +194,9 @@
 .modal h3 .seal{width:28px;height:28px;font-size:16px}
 .sample{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px dashed var(--rule-soft);font:inherit;font-size:15px;color:var(--ink-2);padding:11px 4px;cursor:pointer}
 .sample:hover{color:var(--cinnabar)}
+.sample-tip{font-size:13px;color:var(--ink-3);line-height:1.8;margin:-6px 0 10px;padding:8px 12px;background:var(--cinnabar-wash)}
+.sample-group+.sample-group{margin-top:10px}
+.sample-topic{font-size:12px;letter-spacing:.3em;color:var(--cinnabar);font-weight:700;padding:10px 4px 2px}
 .modal p{color:var(--ink-2);line-height:1.9}
 .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
 .modal-actions .btn{padding:9px 22px;font-size:14px;letter-spacing:.15em}
@@ -283,12 +289,15 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
         <div class="rows-foot"><span>自下而上</span><span>余数 1 老阳 · 2 少阴 · 3 少阳 · 0 老阴</span></div>
 
         <div class="actions" v-if="mode==='random'">
-          <button v-if="castPhase!=='running'" class="btn btn-seal" @click="startCasting">{{ castPhase==='done' ? '再摇一卦' : '开始摇卦' }}</button>
+          <!-- the same button: start → then stop each line in turn -->
+          <button v-if="castPhase!=='running'" class="btn btn-seal" @click="startCasting">开始摇卦</button>
+          <button v-else class="btn btn-seal btn-stop" @click="stopCurrentLine">
+            停 · 定{{ yaoLabels[currentLine] }}<span class="stop-count">{{ currentLine + 1 }} / 6</span>
+          </button>
           <template v-if="castPhase==='running'">
-            <div class="casting-status">起卦中 · 第 {{ currentLine + 1 }} / 6 爻</div>
-            <div class="hint">按 <kbd>Space</kbd> 或点击红框停住</div>
+            <div class="hint">也可以按 <kbd>Space</kbd> 或点击红框停住</div>
+            <button class="btn btn-ghost" @click="resetCasting">取消</button>
           </template>
-          <button v-if="castPhase==='running'" class="btn btn-ghost" @click="resetCasting">取消</button>
         </div>
         <div class="actions" v-else>
           <button class="btn btn-seal" @click="directSubmit">求卦问卜</button>
@@ -446,7 +455,11 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
 <div v-if="showSamples" class="overlay" @click.self="showSamples = false">
   <div class="modal" role="dialog" aria-modal="true" aria-label="示例问题">
     <h3><span class="seal">例</span>示例问题</h3>
-    <button class="sample" v-for="(q,i) in sampleQuestions" :key="i" @click="question = q; showSamples = false">{{ q }}</button>
+    <p class="sample-tip">提问越具体越准：一事一问，说明对象与时间范围。点选即可填入，再按需修改。</p>
+    <div class="sample-group" v-for="g in sampleQuestions" :key="g.topic">
+      <div class="sample-topic">{{ g.topic }}</div>
+      <button class="sample" v-for="q in g.items" :key="q" @click="question = q; showSamples = false">{{ q }}</button>
+    </div>
     <div class="modal-actions"><button class="btn btn-ghost" @click="showSamples = false">关闭</button></div>
   </div>
 </div>
@@ -480,10 +493,28 @@ createApp({
     const activeHistoryId = ref(null);
     const toasts = reactive([]);
     const yaoLabels = ['初爻','二爻','三爻','四爻','五爻','上爻'];
+    // 示例问题 — 一事一问，最好带上时间范围
     const sampleQuestions = [
-      '我近期的事业运势如何？','这段感情的发展方向如何？','我是否应该接受这份工作？',
-      '近期需要注意什么健康问题？','这个投资项目是否可行？','如何改善目前的人际关系？',
-      '考试/面试的结果会怎样？','目前的困境何时能够化解？',
+      { topic: '事业 · 工作', items: [
+        '三个月内换工作，对我是否有利？',
+        '下周的面试，我能拿到这份工作吗？',
+        '这个项目由我来主导，能否顺利完成？',
+      ]},
+      { topic: '感情 · 家庭', items: [
+        '我和他/她的关系，未来半年会如何发展？',
+        '现在向对方表白，时机合适吗？',
+        '怎样改善我和家人目前的关系？',
+      ]},
+      { topic: '财务 · 买卖', items: [
+        '这笔投资现在进场，一年内能获利吗？',
+        '这间房子由我来放盘，三个月内能成交吗？',
+        '和这位朋友合伙做生意，是否可行？',
+      ]},
+      { topic: '学业 · 生活', items: [
+        '这次考试我能顺利通过吗？',
+        '明年搬到新的城市生活，对我是否有利？',
+        '近期身体有什么需要特别注意的？',
+      ]},
     ];
     const wuxingText = {
       'subject-controls': '体克用 — 我克制局势，主动权在握，宜果断行事',
@@ -682,7 +713,11 @@ createApp({
       return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
     }
     function onKeyDown(e) {
-      if (e.code === 'Space' && castPhase.value === 'running') { e.preventDefault(); stopCurrentLine(); }
+      if (e.code === 'Space' && castPhase.value === 'running') {
+        // preventDefault stops a focused button (e.g. the stop button) from also "clicking" on Space
+        e.preventDefault();
+        if (!e.repeat) stopCurrentLine();
+      }
     }
     onMounted(() => document.addEventListener('keydown', onKeyDown));
     onUnmounted(() => document.removeEventListener('keydown', onKeyDown));
