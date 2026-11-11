@@ -627,15 +627,25 @@ createApp({
     }
     function recordText(item) {
       const r = item.result;
+      // groups are separated by a blank line for readability
       return [
-        `[${formatTime(item.timestamp)}]`,
-        `提问：${item.question || '（未输入问题）'}`,
-        `起卦数字（初爻→上爻）：${item.numbers.join('、')}`,
-        `本卦：${fullName(r.primary)}（${r.primary.name}，第${r.primary.number}卦）　动爻：${movingLineText(r.yaos) || '无'}`,
-        `变卦：${fullName(r.changed)}（${r.changed.name}，第${r.changed.number}卦）`,
-        `互卦：${r.nuclear.name}　综卦：${r.reversed.name}　错卦：${r.opposite.name}`,
-        `体卦：${r.tiYong.subject.name}（${r.tiYong.subject.element}）　用卦：${r.tiYong.object.name}（${r.tiYong.object.element}）　${relShort[r.tiYong.relation]}`,
-      ].join('\n');
+        [
+          `[${formatTime(item.timestamp)}]`,
+          `提问：${item.question || '（未输入问题）'}`,
+          `起卦数字（初爻→上爻）：${item.numbers.join('、')}`,
+        ],
+        [
+          `本卦：${fullName(r.primary)}（${r.primary.name}，第${r.primary.number}卦）`,
+          `动爻：${movingLineText(r.yaos) || '无（静卦）'}`,
+          `变卦：${fullName(r.changed)}（${r.changed.name}，第${r.changed.number}卦）`,
+        ],
+        [
+          `互卦：${r.nuclear.name}　综卦：${r.reversed.name}　错卦：${r.opposite.name}`,
+        ],
+        [
+          `体卦：${r.tiYong.subject.name}（${r.tiYong.subject.element}）　用卦：${r.tiYong.object.name}（${r.tiYong.object.element}）　${relShort[r.tiYong.relation]}`,
+        ],
+      ].map(g => g.join('\n')).join('\n\n');
     }
     async function copyText(text, okMsg) {
       try {
@@ -648,7 +658,7 @@ createApp({
       showToast(okMsg);
     }
     function copyAllRecords() {
-      copyText([...history].reverse().map(recordText).join('\n\n'), '已复制 ' + history.length + ' 条记录');
+      copyText([...history].reverse().map(recordText).join('\n\n━━━━━━━━━━━━━━━━\n\n'), '已复制 ' + history.length + ' 条记录');
     }
     function copyCurrent() {
       const item = history.find(h => h.id === activeHistoryId.value);
