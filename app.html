@@ -657,12 +657,19 @@ createApp({
       }
       showToast(okMsg);
     }
+    // Single export point for every copy action: one reading or many,
+    // readings are joined with a short "---" divider.
+    const RECORD_SEPARATOR = '\n\n---\n\n';
+    function exportRecords(items) {
+      return items.map(recordText).join(RECORD_SEPARATOR);
+    }
     function copyAllRecords() {
-      copyText([...history].reverse().map(recordText).join('\n\n━━━━━━━━━━━━━━━━\n\n'), '已复制 ' + history.length + ' 条记录');
+      if (!history.length) return;
+      copyText(exportRecords([...history].reverse()), '已复制 ' + history.length + ' 条记录');
     }
     function copyCurrent() {
       const item = history.find(h => h.id === activeHistoryId.value);
-      if (item) copyText(recordText(item), '已复制此卦');
+      if (item) copyText(exportRecords([item]), '已复制此卦');
     }
     const chronological = computed(() => [...history].reverse());
     const activeNo = computed(() => {
