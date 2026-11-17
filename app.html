@@ -187,8 +187,10 @@
 .toast.error{background:var(--cinnabar)}
 @keyframes tIn{from{opacity:0;transform:translateY(-8px)}}
 @keyframes tOut{to{opacity:0;transform:translateY(-8px)}}
-.overlay{position:fixed;inset:0;background:rgba(29,27,24,.35);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:900;padding:20px}
-.modal{background:var(--paper);border:1px solid var(--rule);width:100%;max-width:460px;max-height:80vh;overflow:auto;padding:28px 30px;position:relative;box-shadow:0 24px 60px rgba(29,27,24,.25)}
+.modal{background:var(--paper);color:var(--ink);border:1px solid var(--rule);width:calc(100% - 32px);max-width:460px;max-height:80vh;overflow:auto;padding:28px 30px;box-shadow:0 24px 60px rgba(29,27,24,.25)}
+/* keep scrolling inside the dialog from moving the page behind it */
+dialog.modal:modal{margin:auto;overscroll-behavior:contain} /* margin:auto re-centres it after the global * {margin:0} reset */
+dialog.modal::backdrop{background:rgba(29,27,24,.35);backdrop-filter:blur(3px);overflow:hidden;overscroll-behavior:contain}
 .modal::before{content:"";position:absolute;inset:5px;border:1px solid var(--rule-soft);pointer-events:none}
 .modal h3{display:flex;align-items:center;gap:12px;font-size:18px;letter-spacing:.2em;margin-bottom:16px}
 .modal h3 .seal{width:28px;height:28px;font-size:16px}
@@ -235,7 +237,7 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
 </svg>
 
 <div id="app" v-cloak>
-<div class="toasts" aria-live="polite"><div v-for="t in toasts" :key="t.id" class="toast" :class="t.type">{{ t.msg }}</div></div>
+<div class="toasts" role="region" aria-label="通知" aria-live="polite"><div v-for="t in toasts" :key="t.id" class="toast" :class="t.type">{{ t.msg }}</div></div>
 
 <div class="shell">
   <nav class="topbar">
@@ -452,33 +454,31 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
   </footer>
 </div>
 
-<div v-if="showSamples" class="overlay" @click.self="showSamples = false">
-  <div class="modal" role="dialog" aria-modal="true" aria-label="示例问题">
-    <h3><span class="seal">例</span>示例问题</h3>
-    <p class="sample-tip">提问越具体越准：一事一问，说明对象与时间范围。点选即可填入，再按需修改。</p>
-    <div class="sample-group" v-for="g in sampleQuestions" :key="g.topic">
-      <div class="sample-topic">{{ g.topic }}</div>
-      <button class="sample" v-for="q in g.items" :key="q" @click="question = q; showSamples = false">{{ q }}</button>
-    </div>
-    <div class="modal-actions"><button class="btn btn-ghost" @click="showSamples = false">关闭</button></div>
+<!-- native modal dialogs: Esc / back gesture / click outside (closedby="any") close them -->
+<dialog ref="samplesDlg" class="modal" closedby="any" aria-labelledby="samples-title" @close="showSamples = false">
+  <h3 id="samples-title"><span class="seal" aria-hidden="true">例</span>示例问题</h3>
+  <p class="sample-tip">提问越具体越准：一事一问，说明对象与时间范围。点选即可填入，再按需修改。</p>
+  <div class="sample-group" v-for="g in sampleQuestions" :key="g.topic">
+    <div class="sample-topic">{{ g.topic }}</div>
+    <button class="sample" v-for="q in g.items" :key="q" @click="question = q; showSamples = false">{{ q }}</button>
   </div>
-</div>
-<div v-if="showClearConfirm" class="overlay" @click.self="showClearConfirm = false">
-  <div class="modal" role="dialog" aria-modal="true" aria-label="确认清空">
-    <h3><span class="seal">慎</span>确认清空</h3>
-    <p>确定要清空所有占卜记录吗？此操作不可撤销。</p>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" @click="showClearConfirm = false">取消</button>
-      <button class="btn btn-seal" @click="clearHistory">确定清空</button>
-    </div>
+  <form method="dialog" class="modal-actions"><button class="btn btn-ghost">关闭</button></form>
+</dialog>
+<dialog ref="clearDlg" class="modal" closedby="any" aria-labelledby="clear-title" @close="showClearConfirm = false">
+  <h3 id="clear-title"><span class="seal" aria-hidden="true">慎</span>确认清空</h3>
+  <p>确定要清空所有占卜记录吗？此操作不可撤销。</p>
+  <div class="modal-actions">
+    <button class="btn btn-ghost" autofocus @click="showClearConfirm = false">取消</button>
+    <button class="btn btn-seal" @click="clearHistory">确定清空</button>
   </div>
+</dialog>
 </div>
 </div>
 
 <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.prod.js"></script>
 <script src="iChing.js"></script>
 <script>
-const { createApp, ref, reactive, computed, nextTick, onMounted, onUnmounted } = Vue;
+const { createApp, ref, reactive, computed, watch, nextTick, onMounted, onUnmounted } = Vue;
 createApp({
   setup() {
     const question = ref('');
@@ -486,6 +486,28 @@ createApp({
     const mode = ref('random');
     const showSamples = ref(false);
     const showClearConfirm = ref(false);
+    const samplesDlg = ref(null);
+    const clearDlg = ref(null);
+    // drive the native <dialog>s from state; their @close keeps state in sync
+    function syncDialog(dlg, open) {
+      const d = dlg.value;
+      if (!d) return;
+      if (open && !d.open) d.showModal();
+      else if (!open && d.open) d.close();
+    }
+    watch(showSamples, v => syncDialog(samplesDlg, v));
+    watch(showClearConfirm, v => syncDialog(clearDlg, v));
+    // light-dismiss fallback where <dialog closedby> is unsupported (Safari)
+    function addLightDismissFallback(d) {
+      if (!d || 'closedBy' in HTMLDialogElement.prototype) return;
+      const outside = (e) => {
+        const r = d.getBoundingClientRect();
+        return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+      };
+      let pressedOutside = false;
+      d.addEventListener('pointerdown', (e) => { pressedOutside = outside(e); });
+      d.addEventListener('pointerup', (e) => { if (pressedOutside && outside(e)) d.close(); });
+    }
     const manualNumbers = reactive([null,null,null,null,null,null]);
     const result = ref(null);
     const revealKey = ref(0);
@@ -719,10 +741,14 @@ createApp({
         if (!e.repeat) stopCurrentLine();
       }
     }
-    onMounted(() => document.addEventListener('keydown', onKeyDown));
+    onMounted(() => {
+      document.addEventListener('keydown', onKeyDown);
+      addLightDismissFallback(samplesDlg.value);
+      addLightDismissFallback(clearDlg.value);
+    });
     onUnmounted(() => document.removeEventListener('keydown', onKeyDown));
     return {
-      question, displayedQuestion, mode, showSamples, showClearConfirm,
+      question, displayedQuestion, mode, showSamples, showClearConfirm, samplesDlg, clearDlg,
       manualNumbers, result, revealKey, history, activeHistoryId, toasts,
       yaoLabels, sampleQuestions, wuxingText, relShort,
       castPhase, currentLine, castNumbers, displayNumber,
