@@ -189,15 +189,49 @@
 
 /* toast & modal */
 .toasts{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.toast{padding:10px 22px;background:var(--ink);color:var(--paper);font-size:14px;letter-spacing:.1em;box-shadow:0 10px 30px rgba(29,27,24,.2)}
-@media (prefers-reduced-motion:no-preference){.toast{animation:tIn .25s ease,tOut .3s ease 2.6s forwards}}
-.toast.error{background:var(--cinnabar)}
-@keyframes tIn{from{opacity:0;transform:translateY(-8px)}}
-@keyframes tOut{to{opacity:0;transform:translateY(-8px)}}
+/* success uses the same red + text colour as the primary buttons (.btn-seal); errors are ink-black */
+.toast{display:flex;align-items:center;gap:10px;padding:10px 22px;background:var(--cinnabar);color:#FBF6EC;font-size:14px;letter-spacing:.1em;box-shadow:0 10px 30px rgba(168,51,42,.28)}
+.toast-icon{font-size:15px;line-height:1}
+/* entry: @starting-style; exit: <transition-group name="toast"> waits for this transition before removing */
+.toast{transition:opacity .25s ease-out,translate .25s ease-out}
+@starting-style{.toast{opacity:0;translate:0 -10px}}
+.toast-leave-to{opacity:0;translate:0 -10px}
+@media (prefers-reduced-motion:reduce){
+  .toast{transition-duration:.1s}
+  @starting-style{.toast{translate:none}}
+  .toast-leave-to{translate:none}
+}
+.toast.error{background:var(--ink);color:var(--paper);box-shadow:0 10px 30px rgba(29,27,24,.2)}
 .modal{background:var(--paper);color:var(--ink);border:1px solid var(--rule);width:calc(100% - 32px);max-width:460px;max-height:80vh;overflow:auto;padding:28px 30px;box-shadow:0 24px 60px rgba(29,27,24,.25)}
 /* keep scrolling inside the dialog from moving the page behind it */
 dialog.modal:modal{margin:auto;overscroll-behavior:contain} /* margin:auto re-centres it after the global * {margin:0} reset */
-dialog.modal::backdrop{background:rgba(29,27,24,.35);backdrop-filter:blur(3px);overflow:hidden;overscroll-behavior:contain}
+dialog.modal::backdrop{overflow:hidden;overscroll-behavior:contain}
+/* open/close animation. Open state is skipped while [data-closing] is set, which is how
+   browsers without overlay/display transitions (Firefox, Safari) still animate the exit. */
+dialog.modal{
+  opacity:0;
+  transition-property:opacity,transform,display,overlay;
+  transition-duration:.25s;
+  transition-timing-function:ease-out;
+  transition-behavior:allow-discrete;
+}
+dialog.modal::backdrop{
+  background-color:rgba(29,27,24,0);backdrop-filter:blur(0);
+  transition-property:background-color,backdrop-filter,display,overlay;
+  transition-duration:.25s;
+  transition-timing-function:ease-out;
+  transition-behavior:allow-discrete;
+}
+dialog.modal[open]:where(:not([data-closing])){opacity:1}
+@starting-style{dialog.modal[open]:where(:not([data-closing])){opacity:0}}
+dialog.modal[open]:where(:not([data-closing]))::backdrop{background-color:rgba(29,27,24,.35);backdrop-filter:blur(3px)}
+@starting-style{dialog.modal[open]:where(:not([data-closing]))::backdrop{background-color:rgba(29,27,24,0);backdrop-filter:blur(0)}}
+@media (prefers-reduced-motion:no-preference){
+  dialog.modal{transform:translateY(8px) scale(.97)}
+  dialog.modal[open]:where(:not([data-closing])){transform:none}
+  @starting-style{dialog.modal[open]:where(:not([data-closing])){transform:translateY(8px) scale(.97)}}
+}
+@media (prefers-reduced-motion:reduce){dialog.modal,dialog.modal::backdrop{transition-duration:.1s}}
 .modal::before{content:"";position:absolute;inset:5px;border:1px solid var(--rule-soft);pointer-events:none}
 .modal h2{display:flex;align-items:center;gap:12px;font-size:18px;letter-spacing:.2em;margin-bottom:16px}
 .modal h2 .seal{width:28px;height:28px;font-size:16px}
@@ -244,7 +278,9 @@ footer a{color:var(--ink-3);text-decoration-color:var(--field-border)}
 </svg>
 
 <div id="app" v-cloak>
-<div class="toasts" role="region" aria-label="通知" aria-live="polite"><div v-for="t in toasts" :key="t.id" class="toast" :class="t.type">{{ t.msg }}</div></div>
+<transition-group tag="div" name="toast" class="toasts" role="region" aria-label="通知" aria-live="polite">
+  <div v-for="t in toasts" :key="t.id" class="toast" :class="t.type"><span class="toast-icon" aria-hidden="true">{{ t.type === 'error' ? '⚠' : '✓' }}</span>{{ t.msg }}</div>
+</transition-group>
 
 <div class="shell">
   <nav class="topbar">
@@ -473,7 +509,7 @@ footer a{color:var(--ink-3);text-decoration-color:var(--field-border)}
     <div class="sample-topic">{{ g.topic }}</div>
     <button class="sample" v-for="q in g.items" :key="q" @click="question = q; showSamples = false">{{ q }}</button>
   </div>
-  <form method="dialog" class="modal-actions"><button class="btn btn-ghost">关闭</button></form>
+  <div class="modal-actions"><button type="button" class="btn btn-ghost" @click="showSamples = false">关闭</button></div>
 </dialog>
 <dialog ref="clearDlg" class="modal" closedby="any" aria-labelledby="clear-title" @close="showClearConfirm = false">
   <h2 id="clear-title"><span class="seal" aria-hidden="true">慎</span>确认清空</h2>
@@ -505,8 +541,46 @@ createApp({
     function syncDialog(dlg, open) {
       const d = dlg.value;
       if (!d) return;
-      if (open && !d.open) d.showModal();
-      else if (!open && d.open) d.close();
+      if (open && !d.open) { d.removeAttribute('data-closing'); d.showModal(); }
+      else if (!open && d.open) closeTopLayer(d);
+    }
+    // Exit animations need `overlay` + discrete `display` transitions (Chrome/Edge).
+    // Elsewhere, play the exit via [data-closing] first, then close.
+    let displayTransitionOK;
+    function canTransitionDisplay() {
+      if (displayTransitionOK !== undefined) return displayTransitionOK;
+      if (!window.CSS?.supports?.('transition-behavior', 'allow-discrete') || !document.body) return false;
+      const probe = document.createElement('div');
+      probe.style.cssText = 'transition: display 1s allow-discrete !important; display: block;';
+      document.body.appendChild(probe);
+      getComputedStyle(probe).display;
+      probe.style.display = 'none';
+      displayTransitionOK = getComputedStyle(probe).display === 'block';
+      probe.remove();
+      return displayTransitionOK;
+    }
+    const supportsTopLayerExit = () => !!window.CSS?.supports?.('overlay', 'auto') && canTransitionDisplay();
+    async function closeTopLayer(d) {
+      if (!d.open || d.hasAttribute('data-closing')) return;
+      if (!supportsTopLayerExit()) {
+        d.setAttribute('data-closing', '');
+        const animations = d.getAnimations({ subtree: true });
+        if (animations.length) {
+          await Promise.race([Promise.allSettled(animations.map(a => a.finished)), new Promise(r => setTimeout(r, 2000))]);
+        }
+        if (!d.hasAttribute('data-closing')) return; // reopened meanwhile
+        d.removeAttribute('data-closing');
+      }
+      d.close();
+    }
+    // route Esc / back gesture / closedby light-dismiss through the animated close where needed
+    function animateCloseRequests(d) {
+      if (!d) return;
+      d.addEventListener('cancel', (e) => {
+        if (supportsTopLayerExit()) return; // native exit transition already plays
+        e.preventDefault();
+        closeTopLayer(d);
+      });
     }
     watch(showSamples, v => syncDialog(samplesDlg, v));
     watch(showClearConfirm, v => syncDialog(clearDlg, v));
@@ -519,7 +593,7 @@ createApp({
       };
       let pressedOutside = false;
       d.addEventListener('pointerdown', (e) => { pressedOutside = outside(e); });
-      d.addEventListener('pointerup', (e) => { if (pressedOutside && outside(e)) d.close(); });
+      d.addEventListener('pointerup', (e) => { if (pressedOutside && outside(e)) closeTopLayer(d); });
     }
     const manualNumbers = reactive([null,null,null,null,null,null]);
     const result = ref(null);
@@ -758,6 +832,8 @@ createApp({
       document.addEventListener('keydown', onKeyDown);
       addLightDismissFallback(samplesDlg.value);
       addLightDismissFallback(clearDlg.value);
+      animateCloseRequests(samplesDlg.value);
+      animateCloseRequests(clearDlg.value);
     });
     onUnmounted(() => document.removeEventListener('keydown', onKeyDown));
     return {
