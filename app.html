@@ -203,7 +203,11 @@
 .toast.error{background:var(--ink);color:var(--paper);box-shadow:0 10px 30px rgba(29,27,24,.2)}
 .modal{background:var(--paper);color:var(--ink);border:1px solid var(--rule);width:calc(100% - 32px);max-width:460px;max-height:80vh;overflow:auto;padding:28px 30px;box-shadow:0 24px 60px rgba(29,27,24,.25)}
 /* keep scrolling inside the dialog from moving the page behind it */
-dialog.modal:modal{margin:auto;overscroll-behavior:contain} /* margin:auto re-centres it after the global * {margin:0} reset */
+/* Centre the dialog in every state, not only while :modal. During the exit transition the
+   dialog is already closed (no longer :modal), so without this it would jump to the
+   non-modal default position before fading. margin:auto also undoes the global * {margin:0}. */
+dialog.modal{position:fixed;inset:0;margin:auto;height:fit-content}
+dialog.modal:modal{overscroll-behavior:contain}
 dialog.modal::backdrop{overflow:hidden;overscroll-behavior:contain}
 /* open/close animation. Open state is skipped while [data-closing] is set, which is how
    browsers without overlay/display transitions (Firefox, Safari) still animate the exit. */
