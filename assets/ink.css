@@ -5,8 +5,9 @@
   --paper-card:#F8F4EB;
   --ink:#1D1B18;
   --ink-2:#3E3A33;
-  --ink-3:#6F685C;
-  --ink-4:#9C9484;
+  --ink-3:#5E584D;   /* 6.0:1 on paper */
+  --ink-4:#716A5E;   /* 4.6:1 on paper — still meets AA for small text */
+  --field-border:#877E6D; /* 3.4:1 — visible boundary for inputs (non-text contrast) */
   --rule:#D6CCB8;
   --rule-soft:#E4DCCB;
   --cinnabar:#A8332A;
@@ -24,11 +25,12 @@ body{
   color:var(--ink);
   font-family:var(--font-serif);
   line-height:1.85;
+  font-size-adjust:from-font; /* keep fallback fonts the same visual size while web fonts load */
   -webkit-font-smoothing:antialiased;
   min-height:100vh;
 }
-a{color:var(--cinnabar);text-decoration:none;border-bottom:1px solid rgba(168,51,42,0.35);transition:border-color .2s,color .2s}
-a:hover{border-bottom-color:var(--cinnabar)}
+a{color:var(--cinnabar);text-decoration:underline 1px rgba(168,51,42,0.35);text-underline-offset:.3em;transition:text-decoration-color .2s,color .2s}
+a:hover{text-decoration-color:var(--cinnabar)}
 ::selection{background:var(--cinnabar-wash);color:var(--ink)}
 
 /* seal stamp */
@@ -45,15 +47,15 @@ a:hover{border-bottom-color:var(--cinnabar)}
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:10px;
   font-family:var(--font-serif);font-size:16px;letter-spacing:.3em;text-indent:.3em;
-  padding:14px 40px;border-radius:2px;cursor:pointer;border:none;
+  padding:14px 40px;border-radius:2px;cursor:pointer;border:none;text-decoration:none;
   transition:background .2s,color .2s,box-shadow .2s,transform .15s;
 }
 .btn:active{transform:translateY(1px)}
-.btn-ink{background:var(--ink);color:var(--paper);border-bottom:none}
-.btn-ink:hover{background:#000;box-shadow:0 6px 18px rgba(29,27,24,.22);border-bottom:none}
-.btn-seal{background:var(--cinnabar);color:#FBF6EC;border-bottom:none}
-.btn-seal:hover{background:#922A22;box-shadow:0 6px 18px rgba(168,51,42,.28);border-bottom:none}
-.btn-ghost{background:transparent;color:var(--ink-3);box-shadow:inset 0 0 0 1px var(--rule);letter-spacing:.12em;text-indent:.12em;font-size:14px;padding:11px 24px}
+.btn-ink{background:var(--ink);color:var(--paper)}
+.btn-ink:hover{background:#000;box-shadow:0 6px 18px rgba(29,27,24,.22)}
+.btn-seal{background:var(--cinnabar);color:#FBF6EC}
+.btn-seal:hover{background:#922A22;box-shadow:0 6px 18px rgba(168,51,42,.28)}
+.btn-ghost{background:transparent;color:var(--ink-3);box-shadow:inset 0 0 0 1px var(--field-border);letter-spacing:.12em;text-indent:.12em;font-size:14px;padding:11px 24px}
 .btn-ghost:hover{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink-3)}
 .btn:focus-visible,input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--cinnabar);outline-offset:3px}
 
@@ -75,6 +77,15 @@ a:hover{border-bottom-color:var(--cinnabar)}
 
 .muted{color:var(--ink-3)}
 .latin{font-family:var(--font-latin);font-style:italic;letter-spacing:.02em}
-.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.visually-hidden:where(:not(:focus-within,:active)){position:absolute!important;clip-path:inset(50%)!important;overflow:hidden!important;width:1px!important;height:1px!important;margin:-1px!important;padding:0!important;border:0!important;white-space:nowrap!important}
 
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* Reduced motion is handled per animation (each one opts in with
+   @media (prefers-reduced-motion: no-preference)) instead of a global kill switch. */
+
+/* Windows High Contrast: box-shadows vanish, so give shadow-drawn boundaries a real border */
+@media (forced-colors:active){
+  .btn-ghost,.btn-danger,.seal-outline{border:1px solid ButtonText}
+  .hx-line .bar{background:CanvasText;filter:none}
+  .hx-line.moving .bar{background:Highlight}
+  .hx-line.blank .bar{border:1px solid GrayText}
+}

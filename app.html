@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>起卦 — 易经占卜</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,13 +15,12 @@
 
 /* top bar */
 .topbar{display:flex;align-items:center;justify-content:space-between;padding-bottom:18px;border-bottom:1px solid var(--rule);margin-bottom:36px}
-.brand{display:flex;align-items:center;gap:14px;color:var(--ink);border:none}
-.brand:hover{border:none}
+.brand{display:flex;align-items:center;gap:14px;color:var(--ink);text-decoration:none}
 .brand .seal{width:38px;height:38px;font-size:24px}
 .brand-t{font-size:20px;font-weight:700;letter-spacing:.3em}
 .brand-s{font-size:12px;color:var(--ink-3);letter-spacing:.2em;display:block;line-height:1.2}
-.back{font-size:14px;color:var(--ink-3);border:none;letter-spacing:.12em}
-.back:hover{color:var(--cinnabar);border:none}
+.back{font-size:14px;color:var(--ink-3);text-decoration:none;letter-spacing:.12em}
+.back:hover{color:var(--cinnabar)}
 
 .layout{display:grid;grid-template-columns:400px 1fr;gap:48px;align-items:start}
 .col-left{display:flex;flex-direction:column;gap:40px}
@@ -30,17 +30,17 @@
 .sec-title{font-size:19px}
 
 /* question */
-.q-area{width:100%;min-height:120px;background:var(--paper-card);border:1px solid var(--rule);border-radius:2px;padding:14px 16px;font:inherit;font-size:16px;color:var(--ink);line-height:1.8;resize:vertical;outline:none;transition:border-color .2s,box-shadow .2s;
+.q-area{width:100%;min-height:120px;background:var(--paper-card);border:1px solid var(--field-border);border-radius:2px;padding:14px 16px;font:inherit;font-size:16px;color:var(--ink);line-height:1.8;resize:vertical;outline:none;transition:border-color .2s,box-shadow .2s;
   background-image:linear-gradient(transparent calc(100% - 1px),var(--rule-soft) calc(100% - 1px));background-size:100% 28.8px;background-position:0 14px;background-attachment:local}
 .q-area::placeholder{color:var(--ink-4)}
 .q-area:focus{border-color:var(--ink-3);box-shadow:0 0 0 3px rgba(29,27,24,.05)}
 .q-tools{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
-.text-btn{background:none;border:none;font:inherit;font-size:13px;color:var(--ink-3);cursor:pointer;letter-spacing:.1em;padding:4px 0;border-bottom:1px dashed var(--rule)}
-.text-btn:hover{color:var(--cinnabar);border-bottom-color:var(--cinnabar)}
+.text-btn{background:none;border:none;font:inherit;font-size:13px;color:var(--ink-3);cursor:pointer;letter-spacing:.1em;padding:4px 0;min-block-size:24px;text-decoration:underline dashed var(--field-border);text-underline-offset:.35em}
+.text-btn:hover{color:var(--cinnabar);text-decoration-color:var(--cinnabar)}
 .q-count{font-size:12px;color:var(--ink-4)}
 
 /* mode switch */
-.mode{display:inline-flex;margin-bottom:20px;border:1px solid var(--rule)}
+.mode{display:inline-flex;margin-bottom:20px;border:1px solid var(--field-border)}
 .mode button{background:none;border:none;font:inherit;font-size:14px;letter-spacing:.2em;padding:7px 20px;color:var(--ink-3);cursor:pointer;transition:background .2s,color .2s}
 .mode button.on{background:var(--ink);color:var(--paper)}
 .mode button:disabled{cursor:not-allowed;opacity:.6}
@@ -50,12 +50,11 @@
 .row{display:grid;grid-template-columns:44px 1fr 92px;gap:14px;align-items:center;padding:4px 0}
 .row-lbl{font-size:14px;color:var(--ink-3);letter-spacing:.06em}
 .row.current .row-lbl{color:var(--cinnabar);font-weight:700}
-.num{height:46px;display:flex;align-items:center;justify-content:center;border:1px solid var(--rule);background:var(--paper);font-family:var(--font-latin);font-size:22px;color:var(--ink-4);cursor:default;user-select:none;transition:border-color .15s,color .15s}
+.num{height:46px;display:flex;align-items:center;justify-content:center;border:1px solid var(--field-border);background:var(--paper);font-family:var(--font-latin);font-size:22px;color:var(--ink-4);cursor:default;user-select:none;transition:border-color .15s,color .15s}
 .row.current .num{border-color:var(--cinnabar);color:var(--cinnabar);cursor:pointer;box-shadow:0 0 0 3px var(--cinnabar-wash)}
 .row.locked .num{color:var(--ink)}
-.num-input{width:100%;height:46px;text-align:center;border:1px solid var(--rule);background:var(--paper);font-family:var(--font-latin);font-size:22px;color:var(--ink);outline:none;border-radius:0;-moz-appearance:textfield;appearance:textfield}
+.num-input{width:100%;height:46px;text-align:center;border:1px solid var(--field-border);background:var(--paper);font-family:var(--font-latin);font-size:22px;color:var(--ink);outline:none;border-radius:0;-moz-appearance:textfield;appearance:textfield}
 .num-input::-webkit-outer-spin-button,.num-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.num-input::placeholder{color:var(--ink-4);font-family:var(--font-serif);font-size:14px;font-style:normal}
 .num-input:focus{border-color:var(--ink-3)}
 .row .hx-line{--hx-h:9px;width:72px}
 .row .hx-mark{--hx-mark-off:18px;--hx-mark-size:12px}
@@ -65,11 +64,10 @@
 .actions .btn{width:100%}
 .hint{font-size:13px;color:var(--ink-3);text-align:center;letter-spacing:.06em}
 .hint kbd{font-family:var(--font-latin);font-size:13px;border:1px solid var(--rule);border-bottom-width:2px;padding:0 6px;margin:0 2px;background:var(--paper-card)}
-.btn-stop{position:relative;animation:stopPulse 1.4s ease-in-out infinite}
+.btn-stop{position:relative}
+@media (prefers-reduced-motion:no-preference){.btn-stop{animation:stopPulse 1.4s ease-in-out infinite}}
 .btn-stop .stop-count{font-family:var(--font-latin);font-size:14px;letter-spacing:.05em;opacity:.8;margin-left:6px;text-indent:0}
 @keyframes stopPulse{0%,100%{box-shadow:0 0 0 0 rgba(168,51,42,.35)}50%{box-shadow:0 0 0 6px rgba(168,51,42,0)}}
-.casting-status{font-size:13px;color:var(--cinnabar);text-align:center;letter-spacing:.2em;animation:breathe 1.6s ease-in-out infinite}
-@keyframes breathe{0%,100%{opacity:.5}50%{opacity:1}}
 
 /* history */
 .col-right{display:flex;flex-direction:column;gap:40px;min-width:0}
@@ -81,7 +79,7 @@
 .hist-tip{font-size:13px;color:var(--ink-3);letter-spacing:.1em}
 .hist-btns{display:flex;gap:10px}
 .hist-grid{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;max-height:340px;overflow:auto;padding:2px}
-.hist-card{position:relative;padding:12px 14px;background:var(--paper-card);border:1px solid var(--rule);cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s}
+.hist-card{position:relative;display:block;width:100%;text-align:left;font:inherit;color:inherit;padding:12px 14px;background:var(--paper-card);border:1px solid var(--rule);cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s}
 .hist-card:hover{border-color:var(--ink-3)}
 .hist-card.on{border-color:var(--ink);box-shadow:inset 3px 0 0 var(--cinnabar);background:#FBF7EE}
 .hist-card:focus-visible{outline:2px solid var(--cinnabar);outline-offset:2px}
@@ -127,7 +125,7 @@
 .moving-line .val{color:var(--cinnabar);font-weight:700}
 .moving-line .val.none{color:var(--ink-3);font-weight:400}
 
-.sub-title{display:flex;align-items:center;gap:14px;font-size:14px;letter-spacing:.4em;color:var(--ink-3);margin:38px 0 20px}
+.sub-title{font-weight:400;display:flex;align-items:center;gap:14px;font-size:14px;letter-spacing:.4em;color:var(--ink-3);margin:38px 0 20px}
 .sub-title::before,.sub-title::after{content:"";flex:1;height:1px;background:var(--rule-soft)}
 
 .yao-table{width:100%;border-collapse:collapse;font-size:14px}
@@ -172,18 +170,27 @@
 .hist-empty{padding:26px 0;text-align:center;font-size:13px;color:var(--ink-4);letter-spacing:.12em;border-top:1px solid var(--rule)}
 
 /* reveal animation */
-.reveal .hex-card.primary .hx-line{animation:inkIn .5s ease both}
-.reveal .hex-card.primary .hx-line:nth-child(6){animation-delay:.05s}
-.reveal .hex-card.primary .hx-line:nth-child(5){animation-delay:.15s}
-.reveal .hex-card.primary .hx-line:nth-child(4){animation-delay:.25s}
-.reveal .hex-card.primary .hx-line:nth-child(3){animation-delay:.35s}
-.reveal .hex-card.primary .hx-line:nth-child(2){animation-delay:.45s}
-.reveal .hex-card.primary .hx-line:nth-child(1){animation-delay:.55s}
+/* lines ink in from the bottom (初爻) up; only when motion is welcome */
+@media (prefers-reduced-motion:no-preference){
+  .reveal .hex-card.primary .hx-line{--stagger:.1s;animation:inkIn .5s ease both}
+  @supports (animation-delay: calc((sibling-count() - sibling-index()) * 0.1s)){
+    .reveal .hex-card.primary .hx-line{animation-delay:calc((sibling-count() - sibling-index()) * var(--stagger) + .05s)}
+  }
+  @supports not (animation-delay: calc((sibling-count() - sibling-index()) * 0.1s)){
+    .reveal .hex-card.primary .hx-line:nth-child(6){animation-delay:.05s}
+    .reveal .hex-card.primary .hx-line:nth-child(5){animation-delay:.15s}
+    .reveal .hex-card.primary .hx-line:nth-child(4){animation-delay:.25s}
+    .reveal .hex-card.primary .hx-line:nth-child(3){animation-delay:.35s}
+    .reveal .hex-card.primary .hx-line:nth-child(2){animation-delay:.45s}
+    .reveal .hex-card.primary .hx-line:nth-child(1){animation-delay:.55s}
+  }
+}
 @keyframes inkIn{from{opacity:0;clip-path:inset(0 100% 0 0)}to{opacity:1;clip-path:inset(0 0 0 0)}}
 
 /* toast & modal */
 .toasts{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.toast{padding:10px 22px;background:var(--ink);color:var(--paper);font-size:14px;letter-spacing:.1em;box-shadow:0 10px 30px rgba(29,27,24,.2);animation:tIn .25s ease,tOut .3s ease 2.6s forwards}
+.toast{padding:10px 22px;background:var(--ink);color:var(--paper);font-size:14px;letter-spacing:.1em;box-shadow:0 10px 30px rgba(29,27,24,.2)}
+@media (prefers-reduced-motion:no-preference){.toast{animation:tIn .25s ease,tOut .3s ease 2.6s forwards}}
 .toast.error{background:var(--cinnabar)}
 @keyframes tIn{from{opacity:0;transform:translateY(-8px)}}
 @keyframes tOut{to{opacity:0;transform:translateY(-8px)}}
@@ -192,8 +199,8 @@
 dialog.modal:modal{margin:auto;overscroll-behavior:contain} /* margin:auto re-centres it after the global * {margin:0} reset */
 dialog.modal::backdrop{background:rgba(29,27,24,.35);backdrop-filter:blur(3px);overflow:hidden;overscroll-behavior:contain}
 .modal::before{content:"";position:absolute;inset:5px;border:1px solid var(--rule-soft);pointer-events:none}
-.modal h3{display:flex;align-items:center;gap:12px;font-size:18px;letter-spacing:.2em;margin-bottom:16px}
-.modal h3 .seal{width:28px;height:28px;font-size:16px}
+.modal h2{display:flex;align-items:center;gap:12px;font-size:18px;letter-spacing:.2em;margin-bottom:16px}
+.modal h2 .seal{width:28px;height:28px;font-size:16px}
 .sample{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px dashed var(--rule-soft);font:inherit;font-size:15px;color:var(--ink-2);padding:11px 4px;cursor:pointer}
 .sample:hover{color:var(--cinnabar)}
 .sample-tip{font-size:13px;color:var(--ink-3);line-height:1.8;margin:-6px 0 10px;padding:8px 12px;background:var(--cinnabar-wash)}
@@ -205,7 +212,7 @@ dialog.modal::backdrop{background:rgba(29,27,24,.35);backdrop-filter:blur(3px);o
 
 footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--rule);text-align:center;font-size:12px;color:var(--ink-4);letter-spacing:.1em;line-height:2.2}
 footer .warn{color:var(--ink-3)}
-footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
+footer a{color:var(--ink-3);text-decoration-color:var(--field-border)}
 
 @media (max-width:1000px){
   .layout{grid-template-columns:1fr;gap:40px}
@@ -245,12 +252,13 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
     <a href="index.html" class="back">← 返回首页</a>
   </nav>
 
-  <div class="layout">
+  <main class="layout" id="main">
+    <h1 class="visually-hidden">易经占卜 · 起卦</h1>
     <div class="col-left">
       <!-- 一 · 问 -->
       <section class="panel panel-q">
-        <div class="sec-head"><span class="sec-num">一</span><h2 class="sec-title">心中所问</h2><span class="sec-rule"></span></div>
-        <textarea class="q-area" v-model="question" placeholder="在此写下您的疑惑……" aria-label="心中所问"></textarea>
+        <div class="sec-head"><span class="sec-num">一</span><h2 class="sec-title" id="q-title">心中所问</h2><span class="sec-rule"></span></div>
+        <textarea class="q-area" v-model="question" placeholder="在此写下您的疑惑……" aria-labelledby="q-title"></textarea>
         <div class="q-tools">
           <button class="text-btn" @click="showSamples = true">查看示例问题</button>
           <span class="q-count" v-if="question">{{ question.length }} 字</span>
@@ -269,7 +277,8 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
         <div class="rows">
           <div v-for="(lbl,i) in yaoLabels" :key="i" class="row"
                :class="{ current: mode==='random' && castPhase==='running' && i===currentLine, locked: mode==='random' && (i < currentLine || castPhase==='done') }">
-            <span class="row-lbl">{{ lbl }}</span>
+            <label v-if="mode==='manual'" class="row-lbl" :for="'yao-' + i">{{ lbl }}</label>
+            <span v-else class="row-lbl">{{ lbl }}</span>
             <template v-if="mode==='random'">
               <div class="num" @click="onSlotClick(i)">
                 <template v-if="castPhase==='running' && i===currentLine">{{ displayNumber }}</template>
@@ -278,9 +287,9 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
               </div>
             </template>
             <template v-else>
-              <input class="num-input" type="number" min="1" inputmode="numeric" :placeholder="lbl" :aria-label="lbl" v-model.number="manualNumbers[i]" @keydown.enter="directSubmit">
+              <input class="num-input" :id="'yao-' + i" type="number" min="1" inputmode="numeric" v-model.number="manualNumbers[i]" @keydown.enter="directSubmit">
             </template>
-            <div class="hx-line" :class="rowLineClass(i)">
+            <div class="hx-line" :class="rowLineClass(i)" aria-hidden="true">
               <template v-if="rowLine(i) && rowLine(i).yang"><span class="bar"></span></template>
               <template v-else-if="rowLine(i)"><span class="bar"></span><span class="bar"></span></template>
               <template v-else><span class="bar"></span></template>
@@ -324,13 +333,13 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
             </button>
           </div>
         </div>
-        <ol class="hist-grid">
-          <li v-for="(item,idx) in chronological" :key="item.id" class="hist-card" :class="{ on: activeHistoryId === item.id }"
-              role="button" tabindex="0" :aria-pressed="activeHistoryId === item.id"
-              @click="displayHistoryItem(item)" @keydown.enter.prevent="displayHistoryItem(item)" @keydown.space.prevent="displayHistoryItem(item)">
-            <div class="hc-top"><span class="hc-no">第 {{ idx+1 }} 问</span><span class="hc-time">{{ formatTime(item.timestamp).slice(11,16) }}</span></div>
-            <div class="hc-q">{{ item.question || '（未输入问题）' }}</div>
-            <div class="hc-hex"><span class="hc-char">{{ item.result.primary.character }}</span>{{ item.result.primary.name }} → {{ item.result.changed.name }}</div>
+        <ol class="hist-grid" role="list">
+          <li v-for="(item,idx) in chronological" :key="item.id">
+            <button type="button" class="hist-card" :class="{ on: activeHistoryId === item.id }" :aria-pressed="activeHistoryId === item.id" @click="displayHistoryItem(item)">
+              <span class="hc-top"><span class="hc-no">第 {{ idx+1 }} 问</span><span class="hc-time">{{ formatTime(item.timestamp).slice(11,16) }}</span></span>
+              <span class="hc-q">{{ item.question || '（未输入问题）' }}</span>
+              <span class="hc-hex"><span class="hc-char" aria-hidden="true">{{ item.result.primary.character }}</span>{{ item.result.primary.name }} → {{ item.result.changed.name }}</span>
+            </button>
           </li>
         </ol>
       </section>
@@ -351,7 +360,7 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
           <div class="main-hex">
             <div class="hex-card primary">
               <div class="tag">本卦</div>
-              <div class="hx" :style="{'--hx-mark-off':'26px','--hx-mark-size':'16px'}">
+              <div class="hx" aria-hidden="true" :style="{'--hx-mark-off':'26px','--hx-mark-size':'16px'}">
                 <div v-for="y in topDown(result.primary.yaos)" :key="y.position" class="hx-line" :class="[y.polarity, {moving:y.mutability==='moving'}]">
                   <template v-if="y.polarity==='yang'"><span class="bar"></span></template>
                   <template v-else><span class="bar"></span><span class="bar"></span></template>
@@ -360,14 +369,14 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
               </div>
               <div class="hex-name">{{ result.primary.name }}</div>
               <div class="hex-full">{{ fullName(result.primary) }}</div>
-              <div class="hex-sub">{{ result.primary.character }} 第 {{ result.primary.number }} 卦 · <span class="latin">{{ result.primary.pinyin }}</span></div>
+              <div class="hex-sub">{{ result.primary.character }} 第 {{ result.primary.number }} 卦 · <span class="latin" lang="zh-Latn">{{ result.primary.pinyin }}</span></div>
             </div>
             <div class="hex-arrow" aria-hidden="true">
               <svg viewBox="0 0 56 16"><path d="M2 8 H52 M44 2 L53 8 L44 14"/></svg>变
             </div>
             <div class="hex-card minor">
               <div class="tag">变卦</div>
-              <div class="hx">
+              <div class="hx" aria-hidden="true">
                 <div v-for="y in topDown(result.changed.yaos)" :key="y.position" class="hx-line" :class="y.polarity">
                   <template v-if="y.polarity==='yang'"><span class="bar"></span></template>
                   <template v-else><span class="bar"></span><span class="bar"></span></template>
@@ -375,7 +384,7 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
               </div>
               <div class="hex-name">{{ result.changed.name }}</div>
               <div class="hex-full">{{ fullName(result.changed) }}</div>
-              <div class="hex-sub">{{ result.changed.character }} 第 {{ result.changed.number }} 卦 · <span class="latin">{{ result.changed.pinyin }}</span></div>
+              <div class="hex-sub">{{ result.changed.character }} 第 {{ result.changed.number }} 卦 · <span class="latin" lang="zh-Latn">{{ result.changed.pinyin }}</span></div>
             </div>
           </div>
 
@@ -385,24 +394,26 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
             <span class="val none" v-else>无动爻（静卦）</span>
           </div>
 
-          <div class="sub-title">六 爻</div>
+          <h3 class="sub-title">六 爻</h3>
           <table class="yao-table">
+            <caption class="visually-hidden">六爻明细（由上爻至初爻）</caption>
+            <thead class="visually-hidden"><tr><th scope="col">爻位</th><th scope="col" class="hide-sm">数字</th><th scope="col">爻象</th><th scope="col">四象</th><th scope="col">动静</th></tr></thead>
             <tbody>
               <tr v-for="y in topDown(result.yaos)" :key="y.position">
                 <td>{{ yaoLabels[y.position-1] }}</td>
                 <td class="n hide-sm">{{ y.input }}</td>
-                <td><div class="hx-line" :class="[y.polarity, {moving:y.mutability==='moving'}]"><template v-if="y.polarity==='yang'"><span class="bar"></span></template><template v-else><span class="bar"></span><span class="bar"></span></template></div></td>
+                <td><span class="visually-hidden">{{ y.polarity==='yang' ? '阳爻' : '阴爻' }}</span><div class="hx-line" aria-hidden="true" :class="[y.polarity, {moving:y.mutability==='moving'}]"><template v-if="y.polarity==='yang'"><span class="bar"></span></template><template v-else><span class="bar"></span><span class="bar"></span></template></div></td>
                 <td>{{ y.fourSymbol }}</td>
                 <td :class="{mv:y.mutability==='moving'}">{{ y.mutability==='moving' ? '动' : '静' }}</td>
               </tr>
             </tbody>
           </table>
 
-          <div class="sub-title">其 他 卦 象</div>
+          <h3 class="sub-title">其 他 卦 象</h3>
           <div class="derived">
             <div class="d-card" v-for="d in [{label:'互卦', h: result.nuclear},{label:'综卦', h: result.reversed},{label:'错卦', h: result.opposite}]" :key="d.label">
               <div class="tag">{{ d.label }}</div>
-              <div class="hx">
+              <div class="hx" aria-hidden="true">
                 <div v-for="y in topDown(d.h.yaos)" :key="y.position" class="hx-line" :class="y.polarity">
                   <template v-if="y.polarity==='yang'"><span class="bar"></span></template>
                   <template v-else><span class="bar"></span><span class="bar"></span></template>
@@ -413,10 +424,10 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
             </div>
           </div>
 
-          <div class="sub-title">体 用</div>
+          <h3 class="sub-title">体 用</h3>
           <div class="tiyong">
             <div class="ty">
-              <div class="hx">
+              <div class="hx" aria-hidden="true">
                 <div v-for="(l,li) in trigramLines(result.tiYong.subject.name)" :key="'s'+li" class="hx-line" :class="l"><template v-if="l==='yang'"><span class="bar"></span></template><template v-else><span class="bar"></span><span class="bar"></span></template></div>
               </div>
               <div>
@@ -426,7 +437,7 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
             </div>
             <div class="ty-rel">{{ relShort[result.tiYong.relation] }}</div>
             <div class="ty">
-              <div class="hx">
+              <div class="hx" aria-hidden="true">
                 <div v-for="(l,li) in trigramLines(result.tiYong.object.name)" :key="'o'+li" class="hx-line" :class="l"><template v-if="l==='yang'"><span class="bar"></span></template><template v-else><span class="bar"></span><span class="bar"></span></template></div>
               </div>
               <div>
@@ -445,7 +456,7 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
         </article>
       </section>
     </div>
-  </div>
+  </main>
 
   <footer>
     <div class="warn">免责声明：本工具基于随机数生成卦象，结果仅供娱乐参考，不构成任何决策建议。</div>
@@ -456,7 +467,7 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
 
 <!-- native modal dialogs: Esc / back gesture / click outside (closedby="any") close them -->
 <dialog ref="samplesDlg" class="modal" closedby="any" aria-labelledby="samples-title" @close="showSamples = false">
-  <h3 id="samples-title"><span class="seal" aria-hidden="true">例</span>示例问题</h3>
+  <h2 id="samples-title"><span class="seal" aria-hidden="true">例</span>示例问题</h2>
   <p class="sample-tip">提问越具体越准：一事一问，说明对象与时间范围。点选即可填入，再按需修改。</p>
   <div class="sample-group" v-for="g in sampleQuestions" :key="g.topic">
     <div class="sample-topic">{{ g.topic }}</div>
@@ -465,7 +476,7 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
   <form method="dialog" class="modal-actions"><button class="btn btn-ghost">关闭</button></form>
 </dialog>
 <dialog ref="clearDlg" class="modal" closedby="any" aria-labelledby="clear-title" @close="showClearConfirm = false">
-  <h3 id="clear-title"><span class="seal" aria-hidden="true">慎</span>确认清空</h3>
+  <h2 id="clear-title"><span class="seal" aria-hidden="true">慎</span>确认清空</h2>
   <p>确定要清空所有占卜记录吗？此操作不可撤销。</p>
   <div class="modal-actions">
     <button class="btn btn-ghost" autofocus @click="showClearConfirm = false">取消</button>
@@ -475,7 +486,9 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
 </div>
 </div>
 
-<script src="https://unpkg.com/vue@3.5.13/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/vue@3.5.13/dist/vue.global.prod.js"
+  integrity="sha384-W/1Fp/LgAYO/oTn9Gs+PbeWuMuq1eQCnUMPCeg8POmMYchhzxctjEqtbiCIxDOON"
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="iChing.js"></script>
 <script>
 const { createApp, ref, reactive, computed, watch, nextTick, onMounted, onUnmounted } = Vue;
@@ -582,7 +595,7 @@ createApp({
       if (!l) return 'blank';
       return [l.yang ? 'yang' : 'yin', { moving: l.moving }];
     }
-    const topDown = yaos => [...yaos].reverse();
+    const topDown = yaos => yaos.toReversed();
     function trigramLines(name) {
       const t = typeof TRIGRAMS !== 'undefined' ? Object.values(TRIGRAMS).find(t => t.name === name) : null;
       if (!t || !t.binary) return ['yang','yang','yang'];
@@ -718,13 +731,13 @@ createApp({
     }
     function copyAllRecords() {
       if (!history.length) return;
-      copyText(exportRecords([...history].reverse()), '已复制 ' + history.length + ' 条记录');
+      copyText(exportRecords(history.toReversed()), '已复制 ' + history.length + ' 条记录');
     }
     function copyCurrent() {
       const item = history.find(h => h.id === activeHistoryId.value);
       if (item) copyText(exportRecords([item]), '已复制此卦');
     }
-    const chronological = computed(() => [...history].reverse());
+    const chronological = computed(() => history.toReversed());
     const activeNo = computed(() => {
       const i = history.findIndex(h => h.id === activeHistoryId.value);
       return i === -1 ? 1 : history.length - i;

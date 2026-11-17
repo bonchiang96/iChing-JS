@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>易经占卜 — I Ching Pro</title>
 <meta name="description" content="数字起卦 · 以心问天 — 一个简单纯粹的易经占卜工具，本卦、变卦、互卦、错卦、综卦与体用五行分析。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,8 +24,10 @@
 .hero-copy .tagline{font-size:17px;color:var(--ink-2);letter-spacing:.18em;margin-bottom:38px}
 .hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:20px}
 .hero-note{font-size:13px;color:var(--ink-4);letter-spacing:.12em}
-.scroll-cue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--ink-4);font-size:12px;letter-spacing:.3em;border:none}
-.scroll-cue::after{content:"";width:1px;height:34px;background:linear-gradient(var(--ink-4),transparent);animation:drip 2.4s ease-in-out infinite}
+.scroll-cue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--ink-4);font-size:12px;letter-spacing:.3em;text-decoration:none}
+.scroll-cue::after{content:"";width:1px;height:34px;background:linear-gradient(var(--ink-4),transparent)}
+/* two drips (under 5s) then it rests as a static line */
+@media (prefers-reduced-motion:no-preference){.scroll-cue::after{animation:drip 2.4s ease-in-out 2}}
 @keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
 /* ── sections ── */
@@ -48,14 +51,21 @@ section.block{padding:72px 0;border-top:1px solid var(--rule-soft)}
 .badge{display:inline-block;font-size:12px;color:var(--cinnabar);border:1px solid var(--cinnabar);padding:0 8px;letter-spacing:.2em;margin-left:10px;vertical-align:4px}
 .demo-hx{position:relative;padding:28px 54px 28px 32px;background:var(--paper-card);border:1px solid var(--rule-soft)}
 .demo-hx .hx{--hx-w:120px;--hx-h:12px;--hx-gap:12px}
-.demo-hx .hx-line{opacity:0;animation:lineIn 7s infinite}
-.demo-hx .hx-line:nth-child(6){animation-delay:0s}
-.demo-hx .hx-line:nth-child(5){animation-delay:.6s}
-.demo-hx .hx-line:nth-child(4){animation-delay:1.2s}
-.demo-hx .hx-line:nth-child(3){animation-delay:1.8s}
-.demo-hx .hx-line:nth-child(2){animation-delay:2.4s}
-.demo-hx .hx-line:nth-child(1){animation-delay:3s}
-@keyframes lineIn{0%{opacity:0;transform:translateX(-6px)}6%,82%{opacity:1;transform:none}92%,100%{opacity:0}}
+@media (prefers-reduced-motion:no-preference){
+  .demo-hx.play .hx-line{--stagger:.6s;animation:lineIn .6s ease both}
+  @supports (animation-delay: calc((sibling-count() - sibling-index()) * 0.1s)){
+    .demo-hx.play .hx-line{animation-delay:calc((sibling-count() - sibling-index()) * var(--stagger))}
+  }
+  @supports not (animation-delay: calc((sibling-count() - sibling-index()) * 0.1s)){
+    .demo-hx.play .hx-line:nth-child(6){animation-delay:0s}
+    .demo-hx.play .hx-line:nth-child(5){animation-delay:.6s}
+    .demo-hx.play .hx-line:nth-child(4){animation-delay:1.2s}
+    .demo-hx.play .hx-line:nth-child(3){animation-delay:1.8s}
+    .demo-hx.play .hx-line:nth-child(2){animation-delay:2.4s}
+    .demo-hx.play .hx-line:nth-child(1){animation-delay:3s}
+  }
+}
+@keyframes lineIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
 .demo-caption{text-align:center;font-size:12px;color:var(--ink-4);letter-spacing:.25em;margin-top:14px}
 
 /* privacy */
@@ -86,13 +96,13 @@ section.block{padding:72px 0;border-top:1px solid var(--rule-soft)}
 /* disclaimer */
 .disclaimer{margin:0 auto;padding:28px 32px;border:1px solid var(--rule);position:relative;background:var(--paper-card)}
 .disclaimer::before{content:"";position:absolute;inset:5px;border:1px solid var(--rule-soft);pointer-events:none}
-.disclaimer h3{display:flex;align-items:center;gap:12px;font-size:16px;letter-spacing:.2em;margin-bottom:12px}
-.disclaimer h3 .seal{width:26px;height:26px;font-size:15px}
+.disclaimer h2{display:flex;align-items:center;gap:12px;font-size:16px;letter-spacing:.2em;margin-bottom:12px}
+.disclaimer h2 .seal{width:26px;height:26px;font-size:15px}
 .disclaimer p{font-size:14px;color:var(--ink-3);line-height:1.8}
 .disclaimer p + p{margin-top:6px}
 
 footer{padding:56px 0 44px;text-align:center;font-size:13px;color:var(--ink-4);letter-spacing:.12em;line-height:2.1}
-footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
+footer a{color:var(--ink-3);text-decoration-color:var(--field-border)}
 
 @media (max-width:820px){
   .hero{min-height:auto;padding:72px 0 140px}
@@ -144,7 +154,7 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
     <div class="hero-glyph" aria-hidden="true">易<span class="seal">占</span></div>
     <div class="hero-copy">
       <h1>易经占卜</h1>
-      <span class="latin">I Ching · The Book of Changes</span>
+      <span class="latin" lang="en">I Ching · The Book of Changes</span>
       <p class="tagline">数字起卦 · 以心问天</p>
       <div class="hero-actions">
         <a href="app.html" class="btn btn-seal">开始占卜</a>
@@ -191,7 +201,7 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
       <div>
         <div class="sec-head"><span class="sec-num">贰</span><h2 class="sec-title">随机摇卦<span class="badge">推荐</span></h2><span class="sec-rule"></span></div>
         <p class="lead">不需要自己选数字。让天来决定。</p>
-        <ol class="cast-steps">
+        <ol class="cast-steps" role="list">
           <li><b>一</b><span>点击「开始摇卦」，数字快速滚动。</span></li>
           <li><b>二</b><span>心念所问之事，在恰当的瞬间按下空格键停住。</span></li>
           <li><b>三</b><span>六爻自下而上依次落定，自然而成。</span></li>
@@ -219,19 +229,19 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
       <div class="sec-head"><span class="sec-num">叁</span><h2 class="sec-title">你的数据，都在你手上</h2><span class="sec-rule"></span></div>
       <div class="privacy">
         <div class="pv">
-          <svg viewBox="0 0 32 32"><rect x="5" y="6" width="22" height="8" rx="1.5"/><rect x="5" y="18" width="22" height="8" rx="1.5"/><path d="M4 4 L28 28"/></svg>
+          <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="6" width="22" height="8" rx="1.5"/><rect x="5" y="18" width="22" height="8" rx="1.5"/><path d="M4 4 L28 28"/></svg>
           <div class="pv-t">无服务器</div><div class="pv-d">没有后端，没有数据库</div>
         </div>
         <div class="pv">
-          <svg viewBox="0 0 32 32"><rect x="5" y="7" width="22" height="14" rx="1.5"/><path d="M2 25 H30"/><path d="M13 14 l2 2 4-4"/></svg>
+          <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="7" width="22" height="14" rx="1.5"/><path d="M2 25 H30"/><path d="M13 14 l2 2 4-4"/></svg>
           <div class="pv-t">仅本地储存</div><div class="pv-d">全部留在你的设备上</div>
         </div>
         <div class="pv">
-          <svg viewBox="0 0 32 32"><path d="M7 26 C10 18 14 12 25 5"/><path d="M5 27 c2-1 4-1 6 0"/><path d="M16 22 c3 1 6 3 8 5"/><path d="M20 18 c3 0 6 1 8 2"/></svg>
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 26 C10 18 14 12 25 5"/><path d="M5 27 c2-1 4-1 6 0"/><path d="M16 22 c3 1 6 3 8 5"/><path d="M20 18 c3 0 6 1 8 2"/></svg>
           <div class="pv-t">关掉即消失</div><div class="pv-d">关闭页面，一切清空</div>
         </div>
         <div class="pv">
-          <svg viewBox="0 0 32 32"><path d="M3 16 C7 9 11 7 16 7 S25 9 29 16 C25 23 21 25 16 25 S7 23 3 16Z"/><circle cx="16" cy="16" r="4"/><path d="M5 27 L27 5"/></svg>
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 16 C7 9 11 7 16 7 S25 9 29 16 C25 23 21 25 16 25 S7 23 3 16Z"/><circle cx="16" cy="16" r="4"/><path d="M5 27 L27 5"/></svg>
           <div class="pv-t">无追踪</div><div class="pv-d">我们看不到你的任何数据</div>
         </div>
       </div>
@@ -259,7 +269,7 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
         <div class="sec-head"><span class="sec-num">伍</span><h2 class="sec-title">支持多题连占</h2><span class="sec-rule"></span></div>
         <p class="body">有些事，一卦看不全。你可以连续摇多卦，全部记录下来，一并发给 AI 做综合分析。</p>
       </div>
-      <ul class="scroll-list">
+      <ul class="scroll-list" role="list">
         <li>连续占卜不丢失</li>
         <li>连占记录自动保存</li>
         <li>一键复制所有记录</li>
@@ -271,7 +281,7 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
   <section class="block">
     <div class="wrap">
       <div class="disclaimer">
-        <h3><span class="seal">注</span>免责声明</h3>
+        <h2><span class="seal" aria-hidden="true">注</span>免责声明</h2>
         <p>本工具基于随机数生成卦象，其底层逻辑为数学随机，不涉及任何超自然力量。</p>
         <p>我们不为占卜结果承担任何责任。所有卦象解读仅供参考，不构成任何形式的决策建议、医疗建议、法律建议或投资建议。</p>
         <p>人生大事，请理性判断，必要时咨询专业人士。</p>
@@ -283,9 +293,18 @@ footer a{color:var(--ink-3);border-bottom-color:var(--rule)}
 <footer>
   <div class="wrap">
     易经占卜 · 数字起卦法<br>
-    Powered by <a href="https://github.com/bonchiang96/iChing-JS" target="_blank" rel="noopener">iChing-JS</a> · MIT License
+    <span lang="en">Powered by <a href="https://github.com/bonchiang96/iChing-JS" target="_blank" rel="noopener">iChing-JS</a> · MIT License</span>
   </div>
 </footer>
 
+<script>
+  // play the bottom-up casting demo once, when it scrolls into view
+  const demo = document.querySelector('.demo-hx');
+  if (demo && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([entry], obs) => {
+      if (entry.isIntersecting) { demo.classList.add('play'); obs.disconnect(); }
+    }, { threshold: 0.6 }).observe(demo);
+  }
+</script>
 </body>
 </html>
